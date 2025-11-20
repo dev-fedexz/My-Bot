@@ -21,18 +21,19 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
     
     if (m.mentionedJid && m.mentionedJid[0]) {
         who = m.mentionedJid[0]
-    } else if (args[0] && args[0].match(/^\d+$/)) {
-        who = args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net'
-    } else if (m.quoted) {
+    } 
+    else if (m.quoted) {
         who = m.quoted.sender
     }
+    else if (args[0] && args[0].match(/^\d+$/)) {
+        who = args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net'
+    } 
     
     if (!who) {
         return conn.reply(m.chat, `*❌ Falta el usuario.*\n\n> *Debe mencionar (@usuario), ingresar el número de teléfono, o responder al mensaje* del usuario al que se le enviará el código.`, m);
     }
 
-    let id = `${who.split`@`[0]}`
-    let pathShadowJadiBot = path.join(`./jadibot-sessions/`, id)
+    let pathShadowJadiBot = path.join(`./jadibot-sessions/`, who.split('@')[0])
     
     ShadowJBOptions.pathShadowJadiBot = pathShadowJadiBot
     ShadowJBOptions.m = m
@@ -55,7 +56,7 @@ export async function ShadowJadiBot(options) {
     let { pathShadowJadiBot, m, conn, args, usedPrefix, command, userToSendCode } = options
     
     let userJid = userToSendCode 
-    const expirationTime = 120; 
+    const expirationTime = 120;
 
     if (!fs.existsSync(pathShadowJadiBot)){
         fs.mkdirSync(pathShadowJadiBot, { recursive: true })
@@ -157,4 +158,4 @@ export async function ShadowJadiBot(options) {
     sock.credsUpdate = saveCreds.bind(sock, true)
     sock.ev.on("connection.update", sock.connectionUpdate)
     sock.ev.on("creds.update", sock.credsUpdate)
-                                      }
+        }
