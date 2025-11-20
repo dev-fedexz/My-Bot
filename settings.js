@@ -33,7 +33,7 @@ global.etiqueta = "ˢᵒʸᵐᵃʸᶜᵒˡ"
 global.currency = "𝐃𝐨𝐥𝐚𝐫𝐞𝐬"
 global.banner = "https://files.catbox.moe/x8xyh8.jpeg"
 global.icono = "https://files.catbox.moe/s4aorc.jpg"
-global.catalogo = fs.readFileSync('./lib/catalogo.jpg')
+global.catalogo = fs.readFileSync('./lib/catalogo.png')
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
