@@ -17,11 +17,11 @@ global.prems = []
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
-global.libreria = "@soymaycol/baileys"
+global.libreria = "Baileys"
 global.vs = "Latest"
 global.sessions = "Shadow/Principal"
 global.jadi = "Shadow/Subbots"
-global.mayJadibts = true
+global.ShadowJadibts = true
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
