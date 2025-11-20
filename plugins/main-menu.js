@@ -83,7 +83,7 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
                 newsletterJid: global.canalIdM[0],
-                newsletterName: global.canalNombreM[0],
+                newsletterName: 'Shadow - Bot',
                 serverMessageId: -1,
             }
         }
