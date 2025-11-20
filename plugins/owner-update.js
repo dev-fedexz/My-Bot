@@ -27,7 +27,7 @@ const handler = async (m, { conn, text, isROwner}) => {
           title: 'Shadow - updates',
           body: 'Actualización completada',
           thumbnailUrl: imageUrl,
-          sourceUrl: 'https://mayapi.ooguy.com',
+          sourceUrl: 'https://github.com/dev-fedexyzz',
           mediaType: 2,
           renderLargerThumbnail: true
 },
