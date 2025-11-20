@@ -38,7 +38,7 @@ END:VCARD`;
                 externalAdReply: {
                     title: "© 2024–2025 Shadow`S Project",
                     body: "Contacta con el CEO del bot.",
-                    thumbnailUrl: "https://files.catbox.moe/1lkvoh.png",
+                    thumbnailUrl: "https://files.catbox.moe/sxnqe0.jpg",
                     mediaType: 1,
                     renderLargerThumbnail: true,
                 },
