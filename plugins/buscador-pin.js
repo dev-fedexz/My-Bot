@@ -182,6 +182,7 @@ let handler = async (m, { conn, args, rcanal }) => {
 
     try {
         const text = args.join(' ');
+        
         if (!text) {
             return sendCustomPedido(m, conn, '*ⓘ* `Por favor, ingresa lo que deseas buscar en Pinterest. Ejemplo: !pin gatos,5`');
         }
@@ -203,9 +204,6 @@ let handler = async (m, { conn, args, rcanal }) => {
         const caption = `✨ **Resultados de Pinterest** - _"${query}"_
         
 *Total encontrados:* ${medias.length}
-        
-*©️ Creado por Brayan330*
-*Github: https://github.com/El-brayan502*
         `;
         
         await sendAlbumMessage(conn, chatId, medias, m, caption);
@@ -216,7 +214,7 @@ let handler = async (m, { conn, args, rcanal }) => {
     }
 };
 
-handler.help = ['pin <query>', 'pinterest <query>'];
+handler.help = ['pin <query>,[limit]', 'pinterest <query>,[limit]'];
 handler.tags = ['buscador'];
 handler.command = ['pin', 'pinterest'];
 export default handler;
