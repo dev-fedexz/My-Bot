@@ -37,8 +37,8 @@ let handler = async (m, { conn, usedPrefix}) => {
     herramientas: '𓂂𓏸  𐅹੭੭   *`𝖨𝗇ƚᧉꭇ𝗇ᧉƚ`* 🌻 ᦡᦡ'
 };
 
-  let header = '%category';
-  let body = '➩ *_%cmd_*';
+  let header = '> ໒( %category)७';
+  let body = '> ➩ *_%cmd_*';
   let footer = '';
   let after = ``;
 
@@ -58,8 +58,12 @@ let handler = async (m, { conn, usedPrefix}) => {
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 }
 
+  const menuTitle = `⊱┊ Shadow Bot - Menú Principal ❦`;
+  const menuBody = `Hola *${nombre}*, selecciona una opción. El bot está activo por ${uptime}.`;
+
   let infoUser = `
-❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
+${menuTitle}
+${menuBody}
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
@@ -95,9 +99,6 @@ let handler = async (m, { conn, usedPrefix}) => {
   
   const imageUrl = 'https://files.catbox.moe/0dvlsr.jpg';
   let imageBuffer = await getBuffer(imageUrl); 
-
-  const menuTitle = `⊱┊ Shadow Bot - Menú Principal ᦡᦡ`;
-  const menuBody = `Hola *${nombre}*, selecciona una opción. El bot está activo por ${uptime}.`;
   
   const buttons = [
       { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
@@ -108,9 +109,6 @@ let handler = async (m, { conn, usedPrefix}) => {
       await conn.sendMessage(m.chat, {
           image: imageBuffer, 
           caption: menuText,
-          headerType: 4, 
-          title: menuTitle,
-          body: menuBody,
           contextInfo: {
               mentionedJid: [m.sender, userId],
               isForwarded: true,
