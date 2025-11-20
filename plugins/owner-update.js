@@ -21,15 +21,15 @@ const handler = async (m, { conn, text, isROwner}) => {
     await m.react('✔️');
 
     await conn.sendMessage(m.chat, {
-      text: messager,
-      contextInfo: {
-        externalAdReply: {
-          title: 'Shadow - updates',
-          body: 'Actualización completada',
-          thumbnail: await (await fetch(icono)).buffer(),
-          sourceUrl: 'https://github.com/dev-fedexyzz',
-          mediaType: 2,
-          renderLargerThumbnail: true
+        text: errorMessage2,
+        contextInfo: {
+          externalAdReply: {
+            title: 'Shadow - updates',
+            thumbnail: await (await fetch(icono)).buffer(),
+            body: 'Error inesperado',
+            sourceUrl: 'https://github.com/dev-fedexyzz',
+            mediaType: 2,
+            renderLargerThumbnail: true
 },
         mentionedJid: [m.sender],
         isForwarded: true
