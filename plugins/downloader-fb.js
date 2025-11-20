@@ -48,7 +48,7 @@ let handler = async (m, { conn, text }) => {
   }
 };
 
-handler.help = ['fb'];
+handler.help = ['fb', 'facebook'];
 handler.tags = ['downloader'];
 handler.command = ['fb', 'facebook'];
 
