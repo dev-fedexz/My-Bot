@@ -37,8 +37,8 @@ let handler = async (m, { conn, usedPrefix}) => {
     herramientas: '𓂂𓏸  𐅹੭੭   *`𝖨𝗇ƚᧉꭇ𝗇ᧉƚ`* 🌻 ᦡᦡ'
 };
 
-  let header = '> ໒( %category)७';
-  let body = '> ➩ *_%cmd_*';
+  let header = '%category';
+  let body = '➩ *_%cmd_*';
   let footer = '';
   let after = ``;
 
@@ -59,7 +59,7 @@ let handler = async (m, { conn, usedPrefix}) => {
 }
 
   let infoUser = `
-❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
+> ❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
@@ -68,7 +68,7 @@ let handler = async (m, { conn, usedPrefix}) => {
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖡𝖤𝖳
 ❐ _𝖳𝗂𝖾𝗆𝗉𝗈 𝖺𝖼𝗍𝗂𝗏𝗈:_ ${uptime}
-❐ _𝖦𝗋𝗎𝗉𝗈𝗌 𝖺𝖼𝗍𝗂𝗏𝗈𝗌:_ ${groupsCount}
+❐ _𝖦𝗋𝗎𝗉𝗈𝗌 𝖼𝗈𝗇𝗍𝖺𝖽𝗈𝗌:_ ${groupsCount}
 ❐ _𝖥𝖾𝖼𝗁𝖺 𝖺𝖼𝗍𝗎𝖺𝗅:_ [${new Date().toLocaleString('es-ES')}]
 `.trim();
 
@@ -96,25 +96,33 @@ let handler = async (m, { conn, usedPrefix}) => {
   const imageUrl = 'https://files.catbox.moe/0dvlsr.jpg';
   let imageBuffer = await getBuffer(imageUrl); 
 
+  const menuTitle = `⊱┊ Shadow Bot - Menú Principal ᦡᦡ`;
+  const menuBody = `Hola *${nombre}*, selecciona una opción. El bot está activo por ${uptime}.`;
+  
+  const buttons = [
+      { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
+      { buttonId: `${usedPrefix}ping`, buttonText: { displayText: '⚡ ᴠᴇʟᴏᴄɪᴅᴀᴅ ᴅᴇʟ ʙᴏᴛ'}, type: 1}
+  ];
+
   if (imageBuffer) {
       await conn.sendMessage(m.chat, {
           image: imageBuffer, 
           caption: menuText,
+          headerType: 4, 
+          title: menuTitle,
+          body: menuBody,
           contextInfo: {
               mentionedJid: [m.sender, userId],
               isForwarded: true,
           },
-          buttons: [
-              { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
-              { buttonId: `${usedPrefix}ping`, buttonText: { displayText: '⚡ ᴠᴇʟᴏᴄɪᴅᴀᴅ ᴅᴇʟ ʙᴏᴛ'}, type: 1}
-          ]
+          buttons: buttons 
       }, { quoted: m});
   } else {
       const externalAdReply = {
-          title: 'Shadow bot',
-          body: '⊱┊ MαყBσƚ ᵇʸ ˢᵒʸᵐᵃყᶜᵒˡ ❦',
+          title: menuTitle,
+          body: menuBody,
           thumbnailUrl: imageUrl,
-          sourceUrl: 'https://mayapi.ooguy.com',
+          sourceUrl: 'https://github.com/Shadows-club',
           mediaType: 2, 
           renderLargerThumbnail: true
       };
@@ -126,10 +134,7 @@ let handler = async (m, { conn, usedPrefix}) => {
               mentionedJid: [m.sender, userId],
               isForwarded: true,
           },
-          buttons: [
-              { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
-              { buttonId: `${usedPrefix}ping`, buttonText: { displayText: '⚡ ᴠᴇʟᴏᴄɪᴅᴀᴅ ᴅᴇʟ ʙᴏᴛ'}, type: 1}
-          ]
+          buttons: buttons
       }, { quoted: m});
   }
 };
