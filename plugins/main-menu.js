@@ -24,7 +24,7 @@ function clockString(seconds) {
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 }
 
-let handler = async (m, { conn, args }) => {
+let handler = async (m, { conn, usedPrefix }) => {
     let userId = m.mentionedJid?.[0] || m.sender
     let categories = {}
     
@@ -39,7 +39,7 @@ let handler = async (m, { conn, args }) => {
         if (!plugin.help || !plugin.tags) continue
         for (let tag of plugin.tags) {
             if (!categories[tag]) categories[tag] = []
-            categories[tag].push(...plugin.help.map(cmd => `${cmd}`))
+            categories[tag].push(...plugin.help.map(cmd => `${usedPrefix}${cmd}`))
         }
     }
 
@@ -67,23 +67,27 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
 
 `
     }
+    
+    const buttons = [
+        { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 Código Sub-Bot'}, type: 1},
+        { buttonId: `${usedPrefix}allmenu`, buttonText: { displayText: '📜 Menú Completo'}, type: 1}
+    ];
 
     await conn.sendMessage(m.chat, {
         text: menuText,
+        buttons: buttons,
         contextInfo: {
             externalAdReply: {
-                title: global.canalNombreM[0],
+                title: 'Shadow - Bot',
                 body: '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕',
                 thumbnailUrl: 'https://i.postimg.cc/SQTP9YCm/4-sin-titulo-20251120074041.jpg',
-                sourceUrl: 'hhttps://github.com/Shadows-club',
+                sourceUrl: 'https://github.com/Shadows-club',
                 mediaType: 1,
                 renderLargerThumbnail: true
             },
             mentionedJid: [m.sender, userId],
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
-                newsletterJid: global.canalIdM[0],
-                newsletterName: global.canalNombreM[0],
                 serverMessageId: -1,
             }
         }
