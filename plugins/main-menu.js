@@ -102,7 +102,7 @@ let handler = async (m, { conn, args}) => {
             externalAdReply: {
                 title: global.canalNombreM[0],
                 body: '𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍',
-                thumbnailUrl: 'https://files.catbox.moe/4fel4e.png',
+                thumbnailUrl: 'https://files.catbox.moe/12zb63.jpg',
                 sourceUrl: 'https://github.com/Shadows-club',
                 mediaType: 1,
                 renderLargerThumbnail: true
