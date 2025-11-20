@@ -24,7 +24,7 @@ function clockString(seconds) {
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 }
 
-let handler = async (m, { conn, usedPrefix }) => {
+let handler = async (m, { conn, args }) => {
     let userId = m.mentionedJid?.[0] || m.sender
     let categories = {}
     
@@ -35,19 +35,16 @@ let handler = async (m, { conn, usedPrefix }) => {
     let groupsCount = Object.values(conn.chats).filter(v => v.id.endsWith('@g.us')).length;
     let uptime = clockString(process.uptime());
     
-    const fixedTitle = 'Shadow - Bot';
-    const fixedBody = '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕';
-
     for (let plugin of Object.values(global.plugins)) {
         if (!plugin.help || !plugin.tags) continue
         for (let tag of plugin.tags) {
             if (!categories[tag]) categories[tag] = []
-            categories[tag].push(...plugin.help.map(cmd => `${usedPrefix}${cmd}`))
+            categories[tag].push(...plugin.help.map(cmd => `${cmd}`))
         }
     }
 
     let infoUser = `
-❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈🧋y *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱 
+❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱 
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
@@ -60,65 +57,37 @@ let handler = async (m, { conn, usedPrefix }) => {
 ❐ _𝖥𝖾𝖼𝗁𝖺 𝖺𝖼𝗍𝗎𝖺𝗅:_ [${new Date().toLocaleString('es-ES')}]
 `.trim();
 
-    let commandsText = '\n';
+    let menuText = infoUser + '\n'
+
     for (let [tag, cmds] of Object.entries(categories)) {
         let tagName = tags[tag] || tag 
-        commandsText += `
+        menuText += `
 ${tagName} ：
 ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
 
 `
     }
-    
-    const buttons = [
-        { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 Código Sub-Bot'}, type: 1},
-        { buttonId: `${usedPrefix}allmenu`, buttonText: { displayText: '📜 Menú Completo'}, type: 1}
-    ];
 
-    const imageUrl = 'https://i.postimg.cc/SQTP9YCm/4-sin-titulo-20251120074041.jpg';
-    let imageBuffer = await getBuffer(imageUrl); 
-
-    // Combinamos el texto de información de usuario y la lista de comandos
-    const finalMenuBody = infoUser + '\n' + commandsText;
-
-    if (imageBuffer) {
-        // Estructura de Plantilla de Botón con Header de Imagen
-        await conn.sendMessage(m.chat, {
-            // Este es el título que aparece grande
-            caption: fixedTitle,
-            // HeaderType 4 = Imagen
-            headerType: 4, 
-            image: imageBuffer,
-            // Este es el cuerpo del mensaje que incluye la descripción fija + toda la información dinámica
-            body: fixedBody + '\n\n' + finalMenuBody, 
-            buttons: buttons,
-            contextInfo: {
-                mentionedJid: [m.sender, userId],
-                isForwarded: true,
+    await conn.sendMessage(m.chat, {
+        text: menuText,
+        contextInfo: {
+            externalAdReply: {
+                title: global.canalNombreM[0],
+                body: '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕',
+                thumbnailUrl: 'https://files.catbox.moe/4fel4e.png',
+                sourceUrl: 'hhttps://github.com/Shadows-club',
+                mediaType: 1,
+                renderLargerThumbnail: true
+            },
+            mentionedJid: [m.sender, userId],
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+                newsletterJid: global.canalIdM[0],
+                newsletterName: global.canalNombreM[0],
+                serverMessageId: -1,
             }
-        }, { quoted: m });
-    } else {
-        // Bloque de respaldo
-        await conn.sendMessage(m.chat, {
-            text: finalMenuBody,
-            buttons: buttons,
-            contextInfo: {
-                externalAdReply: {
-                    title: fixedTitle,
-                    body: fixedBody,
-                    thumbnailUrl: imageUrl,
-                    sourceUrl: 'https://github.com/Shadows-club',
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                },
-                mentionedJid: [m.sender, userId],
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    serverMessageId: -1,
-                }
-            }
-        }, { quoted: m })
-    }
+        }
+    }, { quoted: m })
 }
 
 handler.help = ['menu']
