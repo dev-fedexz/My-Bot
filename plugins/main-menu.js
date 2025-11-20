@@ -4,18 +4,35 @@ import fetch from 'node-fetch';
 const getBuffer = async (url) => {
     try {
         const res = await fetch(url);
-        if (res.status !== 200) {
+        if (res.status!== 200) {
             console.error(`Error al descargar la imagen: Código de estado ${res.status}`);
             return null;
-        }
+}
         return await res.buffer();
-    } catch (e) {
+} catch (e) {
         console.error("Error en getBuffer:", e);
         return null;
-    }
+}
 };
 
-let tags = { info: '𓂂𓏸 𐅹੭੭ *`𝖨𝗇ẜᨣ`* 🪐 ᦡᦡ', anime: '𓂂𓏸 𐅹੭੭ *`𝖠𝗇ı𝗆ᧉ`* 🥞 ᦡᦡ', buscador: '𓂂𓏸 𐅹੭੭ *`Ｓᧉ𝖺ꭇ𝖼𝗁`* 🌿 ᦡᦡ', downloader: '𓂂𓏸 𐅹੭੭ *`𝖣ᨣ𝗐𝗇𝗅ᨣ𝖺𝖽ᧉꭇ𝗌`* 🍇 ᦡᦡ', economy: '𓂂𓏸 𐅹੭੭ *`𝖾𝖼𝗈𝗆𝗈𝗆𝗂𝖺`* 🌵 ᦡᦡ', fun: '𓂂𓏸 𐅹੭੭ *`𝖥𝗎𝗇`* 🌱 ᦡᦡ', group: '𓂂𓏸 𐅹੭੭ *`Gꭇußꭇ𝗎𝗉ᨣ𝗌`* ☕ ᦡ', ai: '𓂂𓏸 𐅹੭੭ *`𝖨𝗇ƚᧉ𝖨ı𝗀ᧉ𝗇𝖼ı𝖺𝗌`* 🧋 ᦡᦡ', game: '𓂂𓏸 𐅹੭੭ *`Game`* 🥞 ᦡᦡ', serbot: '𓂂𓏸 𐅹੭੭ *`𝖩𝖺𝖽ı-ᗷᨣƚ𝗌`* 🍂 ᦡᦡ', main: '𓂂𓏸 𐅹੭੭ *`𝖯ꭇ𝗂𝗇𝖼𝗂𝗉𝖺𝗅`* ☁️ ᦡᦡ', nable: '𓂂𓏸 𐅹੭੭ *`𝖮𝗇-𝖮ẜẜ`* 🍭 ᦡᦡ', nsfw: '𓂂𓏸 𐅹੭੭ *`𝖭𝗌ẜɯ`* 🪼 ᦡᦡ', owner: '𓂂𓏸 𐅹੭੭ *`Oɯ𝗇ᧉꭇ`* 🧇 ᦡᦡ', sticker: '𓂂𓏸 𐅹੭੭ *`𝖲ƚ𝗂𝖼𝗄ᧉꭇ`* ☘ ᦡᦡ', herramientas: '𓂂𓏸 𐅹੭੭ *`𝖨𝗇ƚᧉꭇ𝗇ᧉƚ`* 🌻 ᦡᦡ' };
+let tags = {
+    info: '╭─「 𝖨𝗇ẜᨣ 」─╮',
+    anime: '╭─「 𝖠𝗇ı𝗆ᧉ 」─╮',
+    buscador: '╭─「 Ｓᧉ𝖺ꭇ𝖼𝗁 」─╮',
+    downloader: '╭─「 𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽𝗌 」─╮',
+    economy: '╭─「 𝖤𝖼𝗈𝗇𝗈𝗆𝗂𝖺 」─╮',
+    fun: '╭─「 𝖥𝗎𝗇 」─╮',
+    group: '╭─「 𝖦𝗋𝗎𝗉𝗈𝗌 」─╮',
+    ai: '╭─「 𝖨𝗇ƚ𝖾𝗅𝗂𝗀𝖾𝗇𝖼𝗂𝖺 」─╮',
+    game: '╭─「 𝖦𝖺𝗆𝖾𝗌 」─╮',
+    serbot: '╭─「 𝖩𝖺𝖽ı-ᗷ𝗈𝗍𝗌 」─╮',
+    main: '╭─「 𝖯𝗋𝗂𝗇𝖼𝗂𝗉𝖺𝗅 」─╮',
+    nable: '╭─「 𝖮𝗇-𝖮𝖿𝖿 」─╮',
+    nsfw: '╭─「 𝖭𝗌𝖿𝗐 」─╮',
+    owner: '╭─「 𝖮𝗐𝗇𝖾𝗋 」─╮',
+    sticker: '╭─「 𝖲𝗍𝗂𝖼𝗄𝖾𝗋𝗌 」─╮',
+    herramientas: '╭─「 𝖧𝖾𝗋𝗋𝖺𝗆𝗂𝖾𝗇𝗍𝖺𝗌 」─╮'
+};
 
 function clockString(seconds) {
     let h = Math.floor(seconds / 3600);
@@ -24,75 +41,71 @@ function clockString(seconds) {
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 }
 
-let handler = async (m, { conn, args }) => {
-    let userId = m.mentionedJid?.[0] || m.sender
-    let categories = {}
-    
+let handler = async (m, { conn, args}) => {
+    let userId = m.mentionedJid?.[0] || m.sender;
+    let categories = {};
+
     let nombre = await conn.getName(m.sender);
     let user = global.db.data.users[m.sender];
-    let premium = user?.premium ? 'sɪ́' : 'ɴᴏ'; 
+    let premium = user?.premium? 'sɪ́': 'ɴᴏ';
     let totalreg = Object.keys(global.db.data.users).length;
     let groupsCount = Object.values(conn.chats).filter(v => v.id.endsWith('@g.us')).length;
     let uptime = clockString(process.uptime());
-    
+
     for (let plugin of Object.values(global.plugins)) {
-        if (!plugin.help || !plugin.tags) continue
+        if (!plugin.help ||!plugin.tags) continue;
         for (let tag of plugin.tags) {
-            if (!categories[tag]) categories[tag] = []
-            categories[tag].push(...plugin.help.map(cmd => `${cmd}`))
-        }
-    }
+            if (!categories[tag]) categories[tag] = [];
+            categories[tag].push(...plugin.help.map(cmd => `${cmd}`));
+}
+}
 
     let infoUser = `
-❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱 
+❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
 ❐ _𝖯𝗋𝖾𝗆𝗂𝗎𝗆:_ ${premium}
-❐ _𝖱𝖾𝗀𝗂𝗌𝗍𝗋𝖺𝖽𝗈𝗌 𝗍𝗈𝗍𝖺𝗅𝖾𝗌:_ ${totalreg}
+❐ _𝖱𝖾𝗀𝗂𝗌𝗍𝗋𝖺𝖽𝗈𝗌:_ ${totalreg}
 
-╰┈□ 𝖨𝖭𝖥𝖮-𝖡𝖤𝖳
+╰┈□ 𝖨𝖭𝖥𝖮-𝖡𝖮𝖳
 ❐ _𝖳𝗂𝖾𝗆𝗉𝗈 𝖺𝖼𝗍𝗂𝗏𝗈:_ ${uptime}
-❐ _𝖦𝗋𝗎𝗉𝗈𝗌 𝖼𝗈𝗇𝗍𝖺𝖽𝗈𝗌:_ ${groupsCount}
-❐ _𝖥𝖾𝖼𝗁𝖺 𝖺𝖼𝗍𝗎𝖺𝗅:_ [${new Date().toLocaleString('es-ES')}]
+❐ _𝖦𝗋𝗎𝗉𝗈𝗌 𝖺𝖼𝗍𝗂𝗏𝗈𝗌:_ ${groupsCount}
+❐ _𝖥𝖾𝖼𝗁𝖺:_ ${new Date().toLocaleString('es-ES')}
 `.trim();
 
-    let menuText = infoUser + '\n'
+    let menuText = infoUser + '\n\n';
 
     for (let [tag, cmds] of Object.entries(categories)) {
-        let tagName = tags[tag] || tag 
-        menuText += `
-${tagName} ：
-${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
-
-`
-    }
+        let tagName = tags[tag] || `╭─「 ${tag.toUpperCase()} 」─╮`;
+        menuText += `${tagName}\n${cmds.map(cmd => `➩ ${cmd}`).join('\n')}\n\n`;
+}
 
     await conn.sendMessage(m.chat, {
         text: menuText,
         contextInfo: {
             externalAdReply: {
                 title: global.canalNombreM[0],
-                body: '_𝖲𝗁𝖺𝖽𝗈𝗐 -  𝖡𝗈𝗍_',
+                body: '𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍',
                 thumbnailUrl: 'https://files.catbox.moe/4fel4e.png',
-                sourceUrl: 'hhttps://github.com/Shadows-club',
+                sourceUrl: 'https://github.com/Shadows-club',
                 mediaType: 1,
                 renderLargerThumbnail: true
-            },
+},
             mentionedJid: [m.sender, userId],
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
                 newsletterJid: global.canalIdM[0],
                 newsletterName: '𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍',
-                serverMessageId: -1,
-            }
-        }
-    }, { quoted: m })
+                serverMessageId: -1
 }
+}
+}, { quoted: m});
+};
 
-handler.help = ['menu']
-handler.tags = ['main']
-handler.command = ['menu', 'menú', 'help', 'ayuda']
-handler.register = true
+handler.help = ['menu'];
+handler.tags = ['main'];
+handler.command = ['menu', 'menú', 'help', 'ayuda'];
+handler.register = true;
 
-export default handler
+export default handler;
