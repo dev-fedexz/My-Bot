@@ -19,8 +19,8 @@ global.prems = []
 
 global.libreria = "@soymaycol/baileys"
 global.vs = "Latest"
-global.sessions = "MayBot/Principal"
-global.jadi = "MayBot/Subbots"
+global.sessions = "Shadow/Principal"
+global.jadi = "Shadow/Subbots"
 global.mayJadibts = true
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
