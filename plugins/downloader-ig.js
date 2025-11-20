@@ -1,50 +1,66 @@
 /*
-        * Create By Brayan330
-        * Follow https://github.com/El-brayan502 
-        * Whatsapp : https://whatsapp.com/channel/0029Vb6BDQc0lwgsDN1GJ31i
+	* Create By Brayan330 - Adaptado para Google Images con Puppeteer
+	* Enfocado en comandos .img y .imagen
 */
 
-import axios from 'axios'
-import cheerio from 'cheerio'
-import qs from 'qs'
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
+import https from 'https';
+import baileys, { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+import axios from 'axios';
+import puppeteer from 'puppeteer'; 
 
-async function instagramDownloader(url) {
-  const headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
+async function sendAlbumMessage(conn, jid, medias, options = {}) {
+  if (typeof jid !== 'string') throw new TypeError('jid debe ser string')
+  if (medias.length < 1) throw new RangeError('Se requieren al menos 1 imagen')
+
+  const caption = options.caption || ''
+  const delay = !isNaN(options.delay) ? options.delay : 500
+
+  const album = await baileys.generateWAMessageFromContent(
+    jid,
+    {
+      messageContextInfo: {},
+      albumMessage: {
+        expectedImageCount: medias.filter(m => m.type === 'image').length,
+        expectedVideoCount: medias.filter(m => m.type === 'video').length,
+        ...(options.quoted ? {
+          contextInfo: {
+            remoteJid: options.quoted.key.remoteJid,
+            fromMe: options.quoted.key.fromMe,
+            stanzaId: options.quoted.key.id,
+            participant: options.quoted.key.participant || options.quoted.key.remoteJid,
+            quotedMessage: options.quoted.message
+          }
+        } : {})
+      }
+    },
+    {}
+  )
+
+  await conn.relayMessage(album.key.remoteJid, album.message, { messageId: album.key.id })
+
+  for (let i = 0; i < medias.length; i++) {
+    const { type, data } = medias[i]
+    const img = await baileys.generateWAMessage(
+      album.key.remoteJid,
+      { [type]: { ...data }, ...(i === 0 ? { caption } : {}) },
+      { upload: conn.waUploadToServer }
+    )
+    img.message.messageContextInfo = {
+      messageAssociation: { associationType: 1, parentMessageKey: album.key }
+    }
+    await conn.relayMessage(img.key.remoteJid, img.message, { messageId: img.key.id })
+    await baileys.delay(delay)
   }
 
-  const data = qs.stringify({
-    url: url,
-    lang: 'en'
-  })
-
-  try {
-    const res = await axios.post('https://api.instasave.website/media', data, { headers })
-    const html = (res.data.match(/innerHTML\s*=\s*"(.+?)";/s)?.[1] || '').replace(/\\"/g, '"')
-    const $ = cheerio.load(html)
-    const result = []
-
-    $('.download-items').each((_, el) => {
-      const downloadUrl = $(el).find('a[title="Download"]').attr('href')
-      const type = $(el).find('.format-icon i').attr('class')?.includes('ivideo') ? 'video' : 'image'
-      if (downloadUrl) result.push({ type, url: downloadUrl })
-    })
-
-    if (!result.length) throw new Error('No se encontró contenido')
-    return result
-  } catch (e) {
-    throw new Error(e.response?.data || e.message)
-  }
+  return album
 }
 
-async function sendCustomPedido(m, conn, texto, imgUrl) {
+async function sendCustomPedido(m, conn, texto) {
+  const botname = 'Tu Bot' 
   try {
-    let imgBuffer = null
-    try {
-      const res = await axios.get(imgUrl, { responseType: 'arraybuffer' })
-      imgBuffer = Buffer.from(res.data)
-    } catch (e) { console.error(e) }
+    const img = 'https://raw.githubusercontent.com/El-brayan502/dat4/main/uploads/3e1dfb-1763309355015.jpg'
+    const res = await axios.get(img, { responseType: 'arraybuffer' })
+    const imgBuffer = Buffer.from(res.data)
 
     const orderMessage = {
       orderId: 'FAKE-' + Date.now(),
@@ -53,16 +69,16 @@ async function sendCustomPedido(m, conn, texto, imgUrl) {
       status: 1,
       surface: 1,
       message: texto,
-      orderTitle: 'Canal Oficial',
+      orderTitle: 'Image Bot',
       token: null,
       sellerJid: null,
-      totalAmount1000: '5',
+      totalAmount1000: '0',
       totalCurrencyCode: 'GTQ',
       contextInfo: {
         externalAdReply: {
           title: botname,
           body: '',
-          thumbnailUrl: imgUrl,
+          thumbnailUrl: img,
           mediaType: 1,
           renderLargerThumbnail: true
         }
@@ -77,34 +93,73 @@ async function sendCustomPedido(m, conn, texto, imgUrl) {
   }
 }
 
-let handler = async (m, { conn, args }) => {
-  try {
-    const q = m.quoted || m
+/**
+ * Busca imágenes en Google Images usando Puppeteer y devuelve las URLs.
+ * @param {string} query El término de búsqueda.
+ * @param {number} limit El número máximo de URLs a devolver.
+ * @returns {Promise<string[]>} Un array de URLs de imágenes.
+ */
+const searchGoogleImages = async (query, limit) => {
+    let browser;
+    try {
+        browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+        
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`;
+        await page.goto(searchUrl, { waitUntil: 'networkidle0', timeout: 30000 });
 
-    if (!args[0]) return sendCustomPedido(m, conn, '*ⓘ* Debes ingresar un enlace de Instagram', 'https://raw.githubusercontent.com/El-brayan502/dat2/main/uploads/f2e604-1763533203774.jpg')
+        const imageUrls = await page.evaluate((limit) => {
+            const results = [];
+            const imgElements = document.querySelectorAll('img.rg_i'); 
+            
+            for (let i = 0; i < imgElements.length && results.length < limit; i++) {
+                const img = imgElements[i];
+                const url = img.getAttribute('data-src') || img.getAttribute('src');
+                if (url && url.startsWith('http')) {
+                    results.push(url);
+                }
+            }
+            return results;
+        }, limit);
 
-    const url = args[0]
-    if (!url.includes('instagram.com')) return sendCustomPedido(m, conn, '*🚫 El enlace no es válido*', 'https://raw.githubusercontent.com/El-brayan502/dat3/main/uploads/40ff49-1763533344428.jpg')
-
-    await sendCustomPedido(m, conn, '*⏳ Descargando contenido de Instagram...*', 'https://raw.githubusercontent.com/El-brayan502/dat3/main/uploads/c18acf-1763533197840.jpg')
-
-    const result = await instagramDownloader(url)
-
-    for (let media of result) {
-      if (media.type === 'video') {
-        await conn.sendMessage(m.chat, { video: { url: media.url }, caption: '🎥 Video descargado correctamente' }, { quoted: q })
-      } else if (media.type === 'image') {
-        await conn.sendMessage(m.chat, { image: { url: media.url }, caption: '🖼️ Imagen descargada correctamente' }, { quoted: q })
-      }
+        return imageUrls;
+        
+    } catch (e) {
+        console.error('Error en el scraper de Google Images:', e);
+        return [];
+    } finally {
+        if (browser) {
+            await browser.close(); 
+        }
     }
+}
+
+
+let handler = async (m, { conn, args, rcanal }) => {
+  try {
+    const text = args.join(' ')
+    if (!text) return sendCustomPedido(m, conn, '*ⓘ* `Por favor, ingresa lo que deseas buscar (ej: .img perros, 5)`')
+
+    const parts = text.split(',')
+    const query = parts[0].trim()
+    const limit = parts[1] ? Math.min(parseInt(parts[1].trim()), 12) : 12
+
+    const res = await searchGoogleImages(query, limit) 
+    
+    if (!res.length) return sendCustomPedido(m, conn, `⚠️ No se encontraron resultados de imágenes para "${query}".`)
+
+    const medias = res.map(url => ({ type: 'image', data: { url } }))
+    
+    await sendAlbumMessage(conn, m.chat, medias, { caption: `✨ Resultados de Google Images - "${query}"`, quoted: m })
 
   } catch (e) {
-    await sendCustomPedido(m, conn, `❌ *Error:* ${e.message}`, 'https://raw.githubusercontent.com/El-brayan502/dat3/main/uploads/40ff49-1763533344428.jpg')
+    return sendCustomPedido(m, conn, `⚠️ Se produjo un error al procesar la búsqueda:\n${e.message}`)
   }
 }
 
-handler.help = ['igdl', 'instagram']
-handler.command = ['igdl', 'ig', 'instagram']
+handler.help = ['img', 'imagen']
 handler.tags = ['downloader']
-
+handler.command = ['img', 'imagen']
 export default handler
