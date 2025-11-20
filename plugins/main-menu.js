@@ -59,7 +59,7 @@ let handler = async (m, { conn, usedPrefix}) => {
 }
 
   let infoUser = `
-> ❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
+❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
