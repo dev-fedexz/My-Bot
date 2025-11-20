@@ -1,10 +1,12 @@
 import { execSync} from 'child_process';
+import fetch from 'node-fetch';
 
 const handler = async (m, { conn, text, isROwner}) => {
   if (!isROwner) return;
   await m.react('🕒');
 
   const imageUrl = 'https://files.catbox.moe/4fel4e.png';
+  const icono = imageUrl;
 
   try {
     const stdout = execSync('git pull' + (m.fromMe && text? ' ' + text: ''));
@@ -25,9 +27,8 @@ const handler = async (m, { conn, text, isROwner}) => {
       contextInfo: {
         externalAdReply: {
           title: 'Shadow - updates',
-          thumbnail: await (await fetch(icono)).buffer(),
           body: 'Actualización completada',
-          thumbnailUrl: imageUrl,
+          thumbnail: await (await fetch(icono)).buffer(),
           sourceUrl: 'https://github.com/dev-fedexyzz',
           mediaType: 2,
           renderLargerThumbnail: true
@@ -60,10 +61,9 @@ const handler = async (m, { conn, text, isROwner}) => {
             contextInfo: {
               externalAdReply: {
                 title: 'Shadow - updates',
-                thumbnail: await (await fetch(icono)).buffer(),
                 body: 'Conflictos detectados',
-                thumbnailUrl: imageUrl,
-                sourceUrl: 'https://github.com/dev-fedexyzz'',
+                thumbnail: await (await fetch(icono)).buffer(),
+                sourceUrl: 'https://github.com/dev-fedexyzz',
                 mediaType: 2,
                 renderLargerThumbnail: true
 },
@@ -85,10 +85,9 @@ const handler = async (m, { conn, text, isROwner}) => {
         contextInfo: {
           externalAdReply: {
             title: 'Shadow - updates',
-            thumbnail: await (await fetch(icono)).buffer(),
             body: 'Error inesperado',
-            thumbnailUrl: imageUrl,
-            sourceUrl: 'https://github.com/dev-fedexyzz'',
+            thumbnail: await (await fetch(icono)).buffer(),
+            sourceUrl: 'https://github.com/dev-fedexyzz',
             mediaType: 2,
             renderLargerThumbnail: true
 },
