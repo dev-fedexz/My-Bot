@@ -8,7 +8,7 @@ const { generateWAMessageFromContent, prepareWAMessageMedia, proto } = pkg
 var handler = m => m
 handler.all = async function (m) {
 
-global.canalIdM = ["120363406779062566@newsletter"]
+global.canalIdM = ["120363406779087566@newsletter"]
 global.canalNombreM = ["Shadow - MD"]
 global.channelRD = await getRandomChannel()
 
@@ -29,14 +29,14 @@ var correo = 'soymaycol.cn@gmail.com'
 global.redes = [canal, comunidad, git, github, correo].getRandom()
 
 let nombre = m.pushName || 'Anónimo'
-let botname = global.botName || 'MαყBσƚ'
+let botname = global.botName || 'Shadow- Bot'
 
 global.packsticker = `
 °•☆╮⎯⃘✦⎯⃘☆•°
 ᯽ᬊ Usuario: ${nombre}
 ✺ Fecha: ${fecha}
 ✹ Hora: ${hora}
-⊱┊MαყBσƚ ᴮʸ ˢᵒʸᵐᵃʸᶜᵒˡ ✧
+⊱Made by fede Uchiha ✧
 ⏚⭒°•☆╯⎯⃘✦⎯⃘☆•°
 `
 
