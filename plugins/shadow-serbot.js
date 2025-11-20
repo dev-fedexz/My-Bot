@@ -27,7 +27,7 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
     } 
     
     if (!who) {
-        return conn.reply(m.chat, `*❌ Falta el número de teléfono.*\n\n> *Debe ingresar el número de teléfono* del usuario al que se le enviará el código.`, m);
+        return conn.reply(m.chat, `\`\`\`❌ FALTA EL NÚMERO DE TELÉFONO.\`\`\`\n\n> *Debe ingresar el número de teléfono* del usuario al que se le enviará el código.`, m);
     }
 
     let pathShadowJadiBot = path.join(`./jadibot-sessions/`, who.split('@')[0])
@@ -90,7 +90,7 @@ export async function ShadowJadiBot(options) {
                 let formattedCode = rawCode.match(/.{1,4}/g)?.join("-");
 
                 const pairingCodeMessage = `
-*🔑 Código de Vinculación de Sub-Bot*
+\`\`\`🔑 Código de Vinculación de Sub-Bot:\`\`\`
 
 > *Hola, ${phoneNumber}.* El dueño del bot te ha generado un código para vincular tu Sub-Bot.
 
