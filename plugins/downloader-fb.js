@@ -26,7 +26,7 @@ async function fbdl(url) {
 
 let handler = async (m, { conn, text }) => {
   if (!text) {
-    return conn.reply(m.chat, `📌 *Uso correcto:*\n.fb <link de Facebook>\n\nEjemplo:\n.fb https://www.facebook.com/share/v/...`, m, global.rcanal);
+    return conn.reply(m.chat, `☃️ *Uso correcto:*\n.fb <link de Facebook>\n\nEjemplo:\n.fb https://www.facebook.com/share/v/...`, m, global.rcanal);
   }
 
   await conn.reply(m.chat, '⏳ *Descargando video, espera...*', m, global.rcanal);
@@ -40,7 +40,7 @@ let handler = async (m, { conn, text }) => {
 
     await conn.sendMessage(m.chat, {
       video: { url },
-      caption: `🎉 *Video descargado correctamente*\n\n🔗 *Fuente:* Facebook\n🎥 *Calidad:* ${result.hd ? 'HD 🚀' : 'SD 💡'}`
+      caption: `☘ *Video descargado correctamente*\n\n🔗 *Fuente:* Facebook\n🎥 *Calidad:* ${result.hd ? 'HD 🚀' : 'SD 💡'}`
     }, { quoted: m, contextInfo: global.rcanal.contextInfo });
 
   } catch (e) {
