@@ -5,7 +5,7 @@ const handler = async (m, { conn, text, isROwner}) => {
   if (!isROwner) return;
   await m.react('🕒');
 
-  const imageUrl = 'https://files.catbox.moe/4fel4e.png';
+  const imageUrl = 'https://files.catbox.moe/ahpkd5.jpg';
   const icono = imageUrl;
 
   try {
