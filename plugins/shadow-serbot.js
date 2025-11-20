@@ -19,18 +19,15 @@ const ShadowJBOptions = {}
 let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
     let who
     
-    if (m.mentionedJid && m.mentionedJid[0]) {
-        who = m.mentionedJid[0]
-    } 
-    else if (m.quoted) {
-        who = m.quoted.sender
-    }
-    else if (args[0] && args[0].match(/^\d+$/)) {
-        who = args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net'
+    if (args[0]) {
+        const digits = args[0].replace(/[^0-9]/g, ''); 
+        if (digits.length >= 8) {
+            who = digits + '@s.whatsapp.net'
+        }
     } 
     
     if (!who) {
-        return conn.reply(m.chat, `*❌ Falta el usuario.*\n\n> *Debe mencionar (@usuario), ingresar el número de teléfono, o responder al mensaje* del usuario al que se le enviará el código.`, m);
+        return conn.reply(m.chat, `*❌ Falta el número de teléfono.*\n\n> *Debe ingresar el número de teléfono* del usuario al que se le enviará el código.`, m);
     }
 
     let pathShadowJadiBot = path.join(`./jadibot-sessions/`, who.split('@')[0])
@@ -46,7 +43,7 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
     await ShadowJadiBot(ShadowJBOptions)
 } 
 
-handler.help = ['darcode <@user|number>']
+handler.help = ['darcode <number>']
 handler.tags = ['owner']
 handler.command = ['darcode']
 handler.owner = true
@@ -95,7 +92,7 @@ export async function ShadowJadiBot(options) {
                 const pairingCodeMessage = `
 *🔑 Código de Vinculación de Sub-Bot*
 
-> *Hola, @${phoneNumber}.* El dueño del bot te ha generado un código para vincular tu Sub-Bot.
+> *Hola, ${phoneNumber}.* El dueño del bot te ha generado un código para vincular tu Sub-Bot.
 
 *Código:* \`\`\`${formattedCode}\`\`\`
 
@@ -103,11 +100,10 @@ export async function ShadowJadiBot(options) {
 `;
                 
                 await conn.sendMessage(userJid, { 
-                    text: pairingCodeMessage.trim(),
-                    mentions: [userJid]
+                    text: pairingCodeMessage.trim()
                 }, { ephemeralExpiration: expirationTime });
 
-                await conn.reply(m.chat, `✅ *Código enviado exitosamente* al usuario: *@${phoneNumber}*.\n\n> *El código se envió al privado del usuario*`, m, { mentions: [userJid] });
+                await conn.reply(m.chat, `✅ *Código enviado exitosamente* al usuario: *${phoneNumber}*.\n\n> *El código se envió al privado del usuario*`, m);
 
                 await sock.ws.close();
                 sock.ev.removeAllListeners();
@@ -119,7 +115,7 @@ export async function ShadowJadiBot(options) {
                 
             } catch (e) {
                 console.error('Error al generar o enviar código:', e);
-                await conn.reply(m.chat, `❌ *Error al generar/enviar el código de vinculación* a @${userJid.split('@')[0]}.`, m, { mentions: [userJid] });
+                await conn.reply(m.chat, `❌ *Error al generar/enviar el código de vinculación* a ${userJid.split('@')[0]}.`, m);
             }
         }
 
@@ -158,4 +154,4 @@ export async function ShadowJadiBot(options) {
     sock.credsUpdate = saveCreds.bind(sock, true)
     sock.ev.on("connection.update", sock.connectionUpdate)
     sock.ev.on("creds.update", sock.credsUpdate)
-        }
+                          }
