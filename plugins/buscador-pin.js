@@ -1,189 +1,222 @@
-/*
-	* Create By Brayan330
-	* Follow https://github.com/El-brayan502 
-	* Whatsapp : https://whatsapp.com/channel/0029Vb6BDQc0lwgsDN1GJ31i
-*/
+import https from 'https';
+import { generateWAMessageFromContent, delay as baileysDelay } from '@whiskeysockets/baileys';
+import axios from 'axios';
 
-import https from 'https'
-import baileys, { generateWAMessageFromContent } from '@whiskeysockets/baileys'
-import axios from 'axios'
+async function sendAlbumMessage(conn, jid, medias, quoted = null, caption = '') {
+    if (typeof jid !== 'string') throw new TypeError('jid debe ser string');
+    if (!Array.isArray(medias) || medias.length < 1) throw new RangeError('Se requieren al menos 1 imagen o video');
 
-async function sendAlbumMessage(conn, jid, medias, options = {}) {
-  if (typeof jid !== 'string') throw new TypeError('jid debe ser string')
-  if (medias.length < 1) throw new RangeError('Se requieren al menos 1 imagen')
+    const mappedMedias = medias.map(m => ({
+        type: m.type,
+        data: { url: m.url }
+    }));
+    
+    const album = await generateWAMessageFromContent(
+        jid,
+        {
+            albumMessage: {
+                expectedImageCount: mappedMedias.filter(m => m.type === 'image').length,
+                expectedVideoCount: mappedMedias.filter(m => m.type === 'video').length,
+            }
+        },
+        { quoted }
+    );
 
-  const caption = options.caption || ''
-  const delay = !isNaN(options.delay) ? options.delay : 500
+    await conn.relayMessage(album.key.remoteJid, album.message, { messageId: album.key.id });
 
-  const album = await baileys.generateWAMessageFromContent(
-    jid,
-    {
-      messageContextInfo: {},
-      albumMessage: {
-        expectedImageCount: medias.filter(m => m.type === 'image').length,
-        expectedVideoCount: medias.filter(m => m.type === 'video').length,
-        ...(options.quoted ? {
-          contextInfo: {
-            remoteJid: options.quoted.key.remoteJid,
-            fromMe: options.quoted.key.fromMe,
-            stanzaId: options.quoted.key.id,
-            participant: options.quoted.key.participant || options.quoted.key.remoteJid,
-            quotedMessage: options.quoted.message
-          }
-        } : {})
-      }
-    },
-    {}
-  )
+    for (let i = 0; i < mappedMedias.length; i++) {
+        const { type, data } = mappedMedias[i];
+        
+        const messageContent = {
+            [type]: data,
+            ...(i === 0 ? { caption } : {})
+        };
 
-  await conn.relayMessage(album.key.remoteJid, album.message, { messageId: album.key.id })
+        const imgMsg = await conn.generateMessage(
+            jid,
+            messageContent,
+            { upload: conn.waUploadToServer }
+        );
 
-  for (let i = 0; i < medias.length; i++) {
-    const { type, data } = medias[i]
-    const img = await baileys.generateWAMessage(
-      album.key.remoteJid,
-      { [type]: { ...data }, ...(i === 0 ? { caption } : {}) },
-      { upload: conn.waUploadToServer }
-    )
-    img.message.messageContextInfo = {
-      messageAssociation: { associationType: 1, parentMessageKey: album.key }
+        imgMsg.message.messageContextInfo = {
+            messageAssociation: { associationType: 1, parentMessageKey: album.key }
+        };
+
+        await conn.relayMessage(imgMsg.key.remoteJid, imgMsg.message, { messageId: imgMsg.key.id });
+        await baileysDelay(500);
     }
-    await conn.relayMessage(img.key.remoteJid, img.message, { messageId: img.key.id })
-    await baileys.delay(delay)
-  }
 
-  return album
+    return album;
+}
+
+async function sendCustomPedido(m, conn, texto, title = 'Pinterest Bot') {
+    const defaultThumbUrl = 'https://telegra.ph/file/173981882d2f1f0a20463.jpg';
+    
+    try {
+        const thumbRes = await axios.get(defaultThumbUrl, { responseType: 'arraybuffer' });
+        const thumbBuffer = Buffer.from(thumbRes.data);
+
+        const orderMessage = {
+            orderId: 'FAKE-' + Date.now(),
+            thumbnail: thumbBuffer,
+            itemCount: 1,
+            status: 1,
+            surface: 1,
+            message: texto,
+            orderTitle: title,
+            totalAmount1000: '0',
+            totalCurrencyCode: 'USD',
+            contextInfo: {
+                externalAdReply: {
+                    title: title,
+                    body: '',
+                    thumbnailUrl: defaultThumbUrl,
+                    mediaType: 1,
+                    renderLargerThumbnail: true
+                }
+            }
+        };
+
+        const msg = generateWAMessageFromContent(m.chat, { orderMessage }, { quoted: m });
+        await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
+    } catch (err) {
+        console.error('Error en sendCustomPedido:', err);
+        m.reply('⚠️ Error enviando la respuesta personalizada.', m);
+    }
 }
 
 const getInitialAuth = () => new Promise((resolve, reject) => {
-  const options = {
-    hostname: 'id.pinterest.com',
-    path: '/',
-    method: 'GET',
-    headers: { 'User-Agent': 'Mozilla/5.0' }
-  }
-  https.get(options, res => {
-    const cookies = res.headers['set-cookie']
-    if (cookies) {
-      const csrfCookie = cookies.find(c => c.startsWith('csrftoken='))
-      const pinterestSessCookie = cookies.find(c => c.startsWith('_pinterest_sess='))
-      if (csrfCookie && pinterestSessCookie) {
-        const csrftoken = csrfCookie.split(';')[0].split('=')[1]
-        const sess = pinterestSessCookie.split(';')[0]
-        resolve({ csrftoken, cookieHeader: `csrftoken=${csrftoken}; ${sess}` })
-        return
-      }
-    }
-    reject(new Error('No se pudo obtener el token CSRF o la cookie de sesión.'))
-  }).on('error', e => reject(e))
-})
+    const options = {
+        hostname: 'id.pinterest.com',
+        path: '/',
+        method: 'GET',
+        headers: { 'User-Agent': 'Mozilla/5.0' }
+    };
+
+    https.get(options, res => {
+        const cookies = res.headers['set-cookie'];
+        if (cookies) {
+            const csrfCookie = cookies.find(c => c.startsWith('csrftoken='));
+            const pinterestSessCookie = cookies.find(c => c.startsWith('_pinterest_sess='));
+
+            if (csrfCookie && pinterestSessCookie) {
+                const csrftoken = csrfCookie.split(';')[0].split('=')[1];
+                const sess = pinterestSessCookie.split(';')[0];
+                resolve({ csrftoken, cookieHeader: `csrftoken=${csrftoken}; ${sess}` });
+                return;
+            }
+        }
+        reject(new Error('No se pudo obtener el token CSRF o la cookie de sesión de Pinterest.'));
+    }).on('error', e => reject(new Error(`Fallo en la solicitud inicial a Pinterest: ${e.message}`)));
+});
 
 const searchPinterestAPI = async (query, limit) => {
-  try {
-    const { csrftoken, cookieHeader } = await getInitialAuth()
-    let results = [], bookmark = null, keepFetching = true
-    while (keepFetching && results.length < limit) {
-      const postData = { options: { query, scope: 'pins', bookmarks: bookmark ? [bookmark] : [] }, context: {} }
-      const sourceUrl = `/search/pins/?q=${encodeURIComponent(query)}`
-      const dataString = `source_url=${encodeURIComponent(sourceUrl)}&data=${encodeURIComponent(JSON.stringify(postData))}`
-      const options = {
-        hostname: 'id.pinterest.com',
-        path: '/resource/BaseSearchResource/get/',
-        method: 'POST',
-        headers: {
-          Accept: 'application/json, text/javascript, */*, q=0.01',
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'User-Agent': 'Mozilla/5.0',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRFToken': csrftoken,
-          'X-Pinterest-Source-Url': sourceUrl,
-          Cookie: cookieHeader
+    try {
+        const { csrftoken, cookieHeader } = await getInitialAuth();
+        let results = [], bookmark = null, keepFetching = true;
+        const maxPages = 5;
+
+        for (let page = 0; page < maxPages && keepFetching && results.length < limit; page++) {
+            const postData = { options: { query, scope: 'pins', bookmarks: bookmark ? [bookmark] : [] }, context: {} };
+            const sourceUrl = `/search/pins/?q=${encodeURIComponent(query)}`;
+            const dataString = `source_url=${encodeURIComponent(sourceUrl)}&data=${encodeURIComponent(JSON.stringify(postData))}`;
+
+            const options = {
+                hostname: 'id.pinterest.com',
+                path: '/resource/BaseSearchResource/get/',
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json, text/javascript, */*, q=0.01',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken,
+                    'X-Pinterest-Source-Url': sourceUrl,
+                    Cookie: cookieHeader
+                }
+            };
+
+            const responseBody = await new Promise((resolve, reject) => {
+                const req = https.request(options, res => {
+                    if (res.statusCode !== 200) {
+                        return reject(new Error(`Pinterest API respondió con estado ${res.statusCode}`));
+                    }
+                    let body = '';
+                    res.on('data', chunk => body += chunk);
+                    res.on('end', () => resolve(body));
+                });
+                req.on('error', e => reject(e));
+                req.write(dataString);
+                req.end();
+            });
+
+            const jsonResponse = JSON.parse(responseBody);
+            const resource = jsonResponse.resource_response;
+
+            if (resource?.data?.results) {
+                const pins = resource.data.results;
+                pins.forEach(pin => {
+                    const imageUrl = pin.images?.['orig']?.url || pin.images?.['736x']?.url;
+                    if (imageUrl) results.push(imageUrl);
+                });
+                
+                bookmark = resource.bookmark;
+
+                if (!bookmark || pins.length === 0 || results.length >= limit) {
+                    keepFetching = false;
+                }
+
+            } else {
+                keepFetching = false;
+            }
         }
-      }
-
-      const responseBody = await new Promise((resolve, reject) => {
-        const req = https.request(options, res => {
-          let body = ''
-          res.on('data', chunk => body += chunk)
-          res.on('end', () => resolve(body))
-        })
-        req.on('error', e => reject(e))
-        req.write(dataString)
-        req.end()
-      })
-
-      const jsonResponse = JSON.parse(responseBody)
-      if (jsonResponse.resource_response?.data?.results) {
-        const pins = jsonResponse.resource_response.data.results
-        pins.forEach(pin => { if (pin.images?.['736x']) results.push(pin.images['736x'].url) })
-        bookmark = jsonResponse.resource_response.bookmark
-        if (!bookmark || pins.length === 0) keepFetching = false
-      } else keepFetching = false
+        return results.slice(0, limit);
+    } catch (e) {
+        console.error('Error en searchPinterestAPI:', e.message);
+        throw new Error(`Fallo en la búsqueda de Pinterest: ${e.message}`);
     }
-    return results.slice(0, limit)
-  } catch (e) {
-    throw new Error(e.message)
-  }
-}
-
-async function sendCustomPedido(m, conn, texto) {
-  try {
-    const img = 'https://github.com/dev-fedexz/My-Bot/blob/main/lib/catalogo.png
-    const res = await axios.get(img, { responseType: 'arraybuffer' })
-    const imgBuffer = Buffer.from(res.data)
-
-    const orderMessage = {
-      orderId: 'FAKE-' + Date.now(),
-      thumbnail: imgBuffer,
-      itemCount: 1,
-      status: 1,
-      surface: 1,
-      message: texto,
-      orderTitle: 'Pinterest Bot',
-      token: null,
-      sellerJid: null,
-      totalAmount1000: '0',
-      totalCurrencyCode: 'GTQ',
-      contextInfo: {
-        externalAdReply: {
-          title: botname,
-          body: '',
-          thumbnailUrl: img,
-          mediaType: 1,
-          renderLargerThumbnail: true
-        }
-      }
-    }
-
-    const msg = generateWAMessageFromContent(m.chat, { orderMessage }, { quoted: m })
-    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
-  } catch (err) {
-    console.error(err)
-    m.reply('⚠️ Error enviando el pedido.', m)
-  }
-}
+};
 
 let handler = async (m, { conn, args, rcanal }) => {
-  try {
-    const text = args.join(' ')
-    if (!text) return sendCustomPedido(m, conn, '*ⓘ* `Por favor, ingresa lo que deseas buscar en Pinterest.`')
+    const chatId = m.chat; 
 
-    const parts = text.split(',')
-    const query = parts[0].trim()
-    const limit = parts[1] ? Math.min(parseInt(parts[1].trim()), 12) : 12
+    try {
+        const text = args.join(' ');
+        if (!text) {
+            return sendCustomPedido(m, conn, '*ⓘ* `Por favor, ingresa lo que deseas buscar en Pinterest. Ejemplo: !pin gatos,5`');
+        }
 
-    const res = await searchPinterestAPI(query, limit)
-    if (!res.length) return sendCustomPedido(m, conn, `⚠️ No se encontraron resultados para "${query}".`)
+        const parts = text.split(',');
+        const query = parts[0].trim();
+        const limit = parts[1] ? Math.min(parseInt(parts[1].trim()) || 1, 12) : 12;
 
-    const medias = res.map(url => ({ type: 'image', data: { url } }))
-    await sendAlbumMessage(conn, m.chat, medias, { caption: `✨ Resultados de Pinterest - "${query}"`, quoted: m })
+        await conn.reply(chatId, `🔍 Buscando ${limit} resultados para "${query}" en Pinterest...`, m);
 
-  } catch (e) {
-    return sendCustomPedido(m, conn, `⚠️ Se produjo un error:\n${e.message}`)
-  }
-}
+        const resUrls = await searchPinterestAPI(query, limit);
 
-handler.help = ['pin', 'pinterest']
-handler.tags = ['buscador']
-handler.command = ['pin', 'pinterest']
-export default handler
+        if (!resUrls || !resUrls.length) {
+            return sendCustomPedido(m, conn, `⚠️ No se encontraron resultados para "${query}". Intenta con otra palabra clave.`, 'Búsqueda Fallida');
+        }
+
+        const medias = resUrls.map(url => ({ type: 'image', url: url }));
+        
+        const caption = `✨ **Resultados de Pinterest** - _"${query}"_
+        
+*Total encontrados:* ${medias.length}
+        
+*©️ Creado por Brayan330*
+*Github: https://github.com/El-brayan502*
+        `;
+        
+        await sendAlbumMessage(conn, chatId, medias, m, caption);
+
+    } catch (e) {
+        console.error('Error en el handler de Pinterest:', e);
+        return sendCustomPedido(m, conn, `⚠️ Se produjo un error durante la búsqueda:\n\`${e.message}\``, 'Error en Pinterest');
+    }
+};
+
+handler.help = ['pin <query>', 'pinterest <query>'];
+handler.tags = ['buscador'];
+handler.command = ['pin', 'pinterest'];
+export default handler;
