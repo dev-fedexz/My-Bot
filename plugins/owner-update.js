@@ -46,7 +46,7 @@ const handler = async (m, { conn, text, isROwner}) => {
             line.includes('.cache/') ||
             line.includes('tmp/') ||
             line.includes('database.json') ||
-            line.includes('sessions/Principal/') ||
+            line.includes('Shadow/Principal/') ||
             line.includes('npm-debug.log')
 ) return null;
           return '*→ ' + line.slice(3) + '*';
@@ -59,9 +59,10 @@ const handler = async (m, { conn, text, isROwner}) => {
             contextInfo: {
               externalAdReply: {
                 title: 'Shadow - updates',
+                thumbnail: await (await fetch(icono)).buffer(),
                 body: 'Conflictos detectados',
                 thumbnailUrl: imageUrl,
-                sourceUrl: 'https://mayapi.ooguy.com',
+                sourceUrl: 'https://github.com/dev-fedexyzz'',
                 mediaType: 2,
                 renderLargerThumbnail: true
 },
@@ -83,9 +84,10 @@ const handler = async (m, { conn, text, isROwner}) => {
         contextInfo: {
           externalAdReply: {
             title: 'Shadow - updates',
+            thumbnail: await (await fetch(icono)).buffer(),
             body: 'Error inesperado',
             thumbnailUrl: imageUrl,
-            sourceUrl: 'https://mayapi.ooguy.com',
+            sourceUrl: 'https://github.com/dev-fedexyzz'',
             mediaType: 2,
             renderLargerThumbnail: true
 },
