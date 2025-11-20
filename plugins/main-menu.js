@@ -58,10 +58,8 @@ let handler = async (m, { conn, usedPrefix}) => {
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 }
 
-  const menuBody = `Hola *${nombre}*, selecciona una opción. El bot está activo por ${uptime}.`;
-
   let infoUser = `
-${menuBody}
+❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
@@ -104,7 +102,7 @@ ${menuBody}
   ];
 
   if (imageBuffer) {
-      await conn.sendMessage(m.chat, {
+      conn.sendMessage(m.chat, {
           image: imageBuffer, 
           caption: menuText,
           contextInfo: {
@@ -114,25 +112,25 @@ ${menuBody}
           buttons: buttons 
       }, { quoted: m});
   } else {
-    const externalAdReply = {
-        title: 'Shadow - Bot',
-        body: 'Made by fede Uchiha',
-        thumbnailUrl: imageUrl,
-        sourceUrl: 'https://github.com/Shadows-club',
-        mediaType: 2,
-        renderLargerThumbnail: true
-};
-
-    await conn.sendMessage(m.chat, {
-        text: menuText,
-        contextInfo: {
-            externalAdReply: externalAdReply,
-            mentionedJid: [m.sender, userId],
-            isForwarded: true,
-},
-        buttons: buttons
-}, { quoted: m});
-}
+      const externalAdReply = {
+          title: 'Shadow - Bot',
+          body: 'Made by fede Uchiha',
+          thumbnailUrl: imageUrl,
+          sourceUrl: 'https://github.com/Shadows-club',
+          mediaType: 2, 
+          renderLargerThumbnail: true
+      };
+      
+      conn.sendMessage(m.chat, {
+          text: menuText,
+          contextInfo: {
+              externalAdReply: externalAdReply,
+              mentionedJid: [m.sender, userId],
+              isForwarded: true,
+          },
+          buttons: buttons
+      }, { quoted: m});
+  }
 };
 
 handler.help = ['menu'];
