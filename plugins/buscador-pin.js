@@ -128,7 +128,7 @@ const searchPinterestAPI = async (query, limit) => {
 
 async function sendCustomPedido(m, conn, texto) {
   try {
-    const img = 'https://raw.githubusercontent.com/El-brayan502/dat4/main/uploads/3e1dfb-1763309355015.jpg'
+    const img = 'https://github.com/dev-fedexz/My-Bot/blob/main/lib/catalogo.png
     const res = await axios.get(img, { responseType: 'arraybuffer' })
     const imgBuffer = Buffer.from(res.data)
 
@@ -184,6 +184,6 @@ let handler = async (m, { conn, args, rcanal }) => {
 }
 
 handler.help = ['pin', 'pinterest']
-handler.tags = ['search']
+handler.tags = ['buscador']
 handler.command = ['pin', 'pinterest']
 export default handler
