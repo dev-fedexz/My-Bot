@@ -46,7 +46,7 @@ let handler = async (m, { conn, usedPrefix }) => {
         }
     }
 
-    let infoMenu = `
+    let infoUser = `
 ❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈🧋y *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱 
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
@@ -60,11 +60,10 @@ let handler = async (m, { conn, usedPrefix }) => {
 ❐ _𝖥𝖾𝖼𝗁𝖺 𝖺𝖼𝗍𝗎𝖺𝗅:_ [${new Date().toLocaleString('es-ES')}]
 `.trim();
 
-    let menuText = infoMenu + '\n'
-
+    let commandsText = '\n';
     for (let [tag, cmds] of Object.entries(categories)) {
         let tagName = tags[tag] || tag 
-        menuText += `
+        commandsText += `
 ${tagName} ：
 ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
 
@@ -79,16 +78,19 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
     const imageUrl = 'https://i.postimg.cc/SQTP9YCm/4-sin-titulo-20251120074041.jpg';
     let imageBuffer = await getBuffer(imageUrl); 
 
+    // Combinamos el texto de información de usuario y la lista de comandos
+    const finalMenuBody = infoUser + '\n' + commandsText;
+
     if (imageBuffer) {
-        // Intentamos la estructura de plantilla de botón/media (Header Type 4)
+        // Estructura de Plantilla de Botón con Header de Imagen
         await conn.sendMessage(m.chat, {
-            // Este es el encabezado grande que quieres (Title)
+            // Este es el título que aparece grande
             caption: fixedTitle,
             // HeaderType 4 = Imagen
             headerType: 4, 
             image: imageBuffer,
-            // Este es el cuerpo del mensaje que va entre la imagen y los botones
-            body: fixedBody + '\n\n' + menuText, 
+            // Este es el cuerpo del mensaje que incluye la descripción fija + toda la información dinámica
+            body: fixedBody + '\n\n' + finalMenuBody, 
             buttons: buttons,
             contextInfo: {
                 mentionedJid: [m.sender, userId],
@@ -96,9 +98,9 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
             }
         }, { quoted: m });
     } else {
-        // Bloque de respaldo (se mantiene como vista previa de enlace si la imagen falla)
+        // Bloque de respaldo
         await conn.sendMessage(m.chat, {
-            text: menuText,
+            text: finalMenuBody,
             buttons: buttons,
             contextInfo: {
                 externalAdReply: {
