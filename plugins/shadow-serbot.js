@@ -154,4 +154,4 @@ export async function ShadowJadiBot(options) {
     sock.credsUpdate = saveCreds.bind(sock, true)
     sock.ev.on("connection.update", sock.connectionUpdate)
     sock.ev.on("creds.update", sock.credsUpdate)
-                          }
+    }
