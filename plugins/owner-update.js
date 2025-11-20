@@ -26,7 +26,7 @@ const handler = async (m, { conn, text, isROwner}) => {
         externalAdReply: {
           title: 'Shadow - updates',
           body: 'Actualización completada',
-          thumbnailUrl: imageUrl,
+          thumbnail: await (await fetch(icono)).buffer(),
           sourceUrl: 'https://github.com/dev-fedexyzz',
           mediaType: 2,
           renderLargerThumbnail: true
