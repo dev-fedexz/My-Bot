@@ -118,9 +118,9 @@ let handler = async (m, { conn, args}) => {
     }, { quoted: m});
 };
 
-handler.help = ['menu'];
+handler.help = ['menu', 'menú', 'help'];
 handler.tags = ['main'];
-handler.command = ['menu', 'menú', 'help', 'ayuda'];
+handler.command = ['menu', 'menú', 'help'];
 handler.register = true;
 
 export default handler;
