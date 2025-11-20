@@ -73,25 +73,41 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
         { buttonId: `${usedPrefix}allmenu`, buttonText: { displayText: '📜 Menú Completo'}, type: 1}
     ];
 
-    await conn.sendMessage(m.chat, {
-        text: menuText,
-        buttons: buttons,
-        contextInfo: {
-            externalAdReply: {
-                title: 'Shadow - Bot',
-                body: '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕',
-                thumbnailUrl: 'https://i.postimg.cc/SQTP9YCm/4-sin-titulo-20251120074041.jpg',
-                sourceUrl: 'https://github.com/Shadows-club',
-                mediaType: 1,
-                renderLargerThumbnail: true
-            },
-            mentionedJid: [m.sender, userId],
-            isForwarded: true,
-            forwardedNewsletterMessageInfo: {
-                serverMessageId: -1,
+    const imageUrl = 'https://i.postimg.cc/SQTP9YCm/4-sin-titulo-20251120074041.jpg';
+    let imageBuffer = await getBuffer(imageUrl); 
+
+    if (imageBuffer) {
+        await conn.sendMessage(m.chat, {
+            image: imageBuffer, 
+            caption: menuText,
+            buttons: buttons,
+            contextInfo: {
+                mentionedJid: [m.sender, userId],
+                isForwarded: true,
             }
-        }
-    }, { quoted: m })
+        }, { quoted: m });
+    } else {
+
+        await conn.sendMessage(m.chat, {
+            text: menuText,
+            buttons: buttons,
+            contextInfo: {
+                externalAdReply: {
+                    title: 'Shadow - Bot',
+                    body: '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕',
+                    thumbnailUrl: imageUrl,
+                    sourceUrl: 'https://github.com/Shadows-club',
+                    mediaType: 1,
+                    renderLargerThumbnail: true
+                },
+                mentionedJid: [m.sender, userId],
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    serverMessageId: -1,
+                }
+            }
+        }, { quoted: m })
+    }
 }
 
 handler.help = ['menu']
