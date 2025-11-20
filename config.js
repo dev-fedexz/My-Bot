@@ -11,7 +11,7 @@ global.botNumber = "" //Ejemplo: 573218138672
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
-global.owner = ["51921826291"]
+global.owner = ["5491124918653"]
 global.suittag = [] 
 global.prems = []
 
@@ -25,11 +25,11 @@ global.mayJadibts = true
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
-global.botname = "MαყBσƚ ©"
-global.textbot = "MαყBσƚ © • ცყ ʂơყɱąყƈơƖ"
-global.dev = "ʂơყɱąყƈơƖ"
-global.author = "ʂơყɱąყƈơƖ <3"
-global.etiqueta = "ˢᵒʸᵐᵃʸᶜᵒˡ"
+global.botname = "𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕"
+global.textbot = "© Տհαժօա - Ⴆօէ • 𝘍𝘦𝘥𝘦 𝘜𝘤𝘩𝘪𝘩𝘢"
+global.dev = "𝐅𝐞𝐝𝐞 𝐔𝐜𝐡𝐢𝐡𝐚"
+global.author = "𝘍𝘦𝘥𝘦 𝘜𝘤𝘩𝘪𝘩𝘢"
+global.etiqueta = "𝘍𝘦𝘥𝘦 𝘜𝘤𝘩𝘪𝘩𝘢"
 global.currency = "Yenes"
 global.banner = "https://files.catbox.moe/x8xyh8.jpeg"
 global.icono = "https://files.catbox.moe/s4aorc.jpg"
