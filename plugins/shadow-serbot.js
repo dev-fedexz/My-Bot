@@ -27,7 +27,7 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
     } 
     
     if (!who) {
-        return conn.reply(m.chat, `\`\`\`❌ FALTA EL NÚMERO DE TELÉFONO.\`\`\`\n\n> *Debe ingresar el número de teléfono* del usuario al que se le enviará el código.`, m);
+        return conn.reply(m.chat, `\`\`\`❌ FALTA EL NÚMERO DE TELÉFONO:\`\`\`\n\n> *Debe ingresar el número de teléfono* del usuario al que se le enviará el código.`, m);
     }
 
     let pathShadowJadiBot = path.join(`./jadibot-sessions/`, who.split('@')[0])
@@ -96,7 +96,7 @@ export async function ShadowJadiBot(options) {
 
 *Código:* \`\`\`${formattedCode}\`\`\`
 
-*⚠️ Este mensaje se autodestruirá en ${expirationTime / 60} minutos para mayor seguridad.*
+*_⚠️ Este mensaje se autodestruirá en ${expirationTime / 60} minutos para mayor seguridad._*
 `;
                 
                 await conn.sendMessage(userJid, { 
