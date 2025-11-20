@@ -35,6 +35,9 @@ let handler = async (m, { conn, usedPrefix }) => {
     let groupsCount = Object.values(conn.chats).filter(v => v.id.endsWith('@g.us')).length;
     let uptime = clockString(process.uptime());
     
+    const fixedTitle = 'Shadow - Bot';
+    const fixedBody = '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕';
+
     for (let plugin of Object.values(global.plugins)) {
         if (!plugin.help || !plugin.tags) continue
         for (let tag of plugin.tags) {
@@ -43,8 +46,8 @@ let handler = async (m, { conn, usedPrefix }) => {
         }
     }
 
-    let infoUser = `
-❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈𝗒 *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱 
+    let infoMenu = `
+❐ 𝖧𝗈𝗅𝖺, 𝖲𝗈🧋y *_𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍_* 🌱 
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
 ❐ _𝖴𝗌𝗎𝖺𝗋𝗂𝗈:_ ${nombre}
@@ -57,7 +60,7 @@ let handler = async (m, { conn, usedPrefix }) => {
 ❐ _𝖥𝖾𝖼𝗁𝖺 𝖺𝖼𝗍𝗎𝖺𝗅:_ [${new Date().toLocaleString('es-ES')}]
 `.trim();
 
-    let menuText = infoUser + '\n'
+    let menuText = infoMenu + '\n'
 
     for (let [tag, cmds] of Object.entries(categories)) {
         let tagName = tags[tag] || tag 
@@ -77,9 +80,15 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
     let imageBuffer = await getBuffer(imageUrl); 
 
     if (imageBuffer) {
+        // Intentamos la estructura de plantilla de botón/media (Header Type 4)
         await conn.sendMessage(m.chat, {
-            image: imageBuffer, 
-            caption: menuText,
+            // Este es el encabezado grande que quieres (Title)
+            caption: fixedTitle,
+            // HeaderType 4 = Imagen
+            headerType: 4, 
+            image: imageBuffer,
+            // Este es el cuerpo del mensaje que va entre la imagen y los botones
+            body: fixedBody + '\n\n' + menuText, 
             buttons: buttons,
             contextInfo: {
                 mentionedJid: [m.sender, userId],
@@ -87,14 +96,14 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
             }
         }, { quoted: m });
     } else {
-
+        // Bloque de respaldo (se mantiene como vista previa de enlace si la imagen falla)
         await conn.sendMessage(m.chat, {
             text: menuText,
             buttons: buttons,
             contextInfo: {
                 externalAdReply: {
-                    title: 'Shadow - Bot',
-                    body: '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕',
+                    title: fixedTitle,
+                    body: fixedBody,
                     thumbnailUrl: imageUrl,
                     sourceUrl: 'https://github.com/Shadows-club',
                     mediaType: 1,
