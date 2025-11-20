@@ -58,11 +58,9 @@ let handler = async (m, { conn, usedPrefix}) => {
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 }
 
-  const menuTitle = `⊱┊ Shadow Bot - Menú Principal ❦`;
   const menuBody = `Hola *${nombre}*, selecciona una opción. El bot está activo por ${uptime}.`;
 
   let infoUser = `
-${menuTitle}
 ${menuBody}
 
 ╰┈□ 𝖨𝖭𝖥𝖮-𝖴𝖲𝖤𝖱
@@ -116,25 +114,25 @@ ${menuBody}
           buttons: buttons 
       }, { quoted: m});
   } else {
-      const externalAdReply = {
-          title: menuTitle,
-          body: menuBody,
-          thumbnailUrl: imageUrl,
-          sourceUrl: 'https://github.com/Shadows-club',
-          mediaType: 2, 
-          renderLargerThumbnail: true
-      };
-      
-      await conn.sendMessage(m.chat, {
-          text: menuText,
-          contextInfo: {
-              externalAdReply: externalAdReply,
-              mentionedJid: [m.sender, userId],
-              isForwarded: true,
-          },
-          buttons: buttons
-      }, { quoted: m});
-  }
+    const externalAdReply = {
+        title: 'Shadow - Bot',
+        body: 'Made by fede Uchiha',
+        thumbnailUrl: imageUrl,
+        sourceUrl: 'https://github.com/Shadows-club',
+        mediaType: 2,
+        renderLargerThumbnail: true
+};
+
+    await conn.sendMessage(m.chat, {
+        text: menuText,
+        contextInfo: {
+            externalAdReply: externalAdReply,
+            mentionedJid: [m.sender, userId],
+            isForwarded: true,
+},
+        buttons: buttons
+}, { quoted: m});
+}
 };
 
 handler.help = ['menu'];
