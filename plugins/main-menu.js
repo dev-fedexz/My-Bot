@@ -1,4 +1,19 @@
 import fs from 'fs';
+import fetch from 'node-fetch';
+
+const getBuffer = async (url) => {
+    try {
+        const res = await fetch(url);
+        if (res.status !== 200) {
+            console.error(`Error al descargar la imagen: Código de estado ${res.status}`);
+            return null;
+        }
+        return await res.buffer();
+    } catch (e) {
+        console.error("Error en getBuffer:", e);
+        return null;
+    }
+};
 
 let handler = async (m, { conn, usedPrefix}) => {
   let nombre = await conn.getName(m.sender);
@@ -10,7 +25,7 @@ let handler = async (m, { conn, usedPrefix}) => {
     downloader: '𓂂𓏸  𐅹੭੭   *`𝖣ᨣ𝗐𝗇𝗅ᨣ𝖺𝖽ᧉꭇ𝗌`* 🍇 ᦡᦡ',
     economy: '𓂂𓏸  𐅹੭੭   *`𝖾𝖼𝗈𝗆𝗈𝗆𝗂𝖺`* 🌵 ᦡᦡ',
     fun: '𓂂𓏸  𐅹੭੭   *`𝖥𝗎𝗇`* 🌱 ᦡᦡ',
-    group: '𓂂𓏸  𐅹੭੭   *`Gꭇ𝗎𝗉ᨣ𝗌`* ☕ ᦡ',
+    group: '𓂂𓏸  𐅹੭੭   *`Gꭇußꭇ𝗎𝗉ᨣ𝗌`* ☕ ᦡ',
     ai: '𓂂𓏸  𐅹੭੭   *`𝖨𝗇ƚᧉ𝖨ı𝗀ᧉ𝗇𝖼ı𝖺𝗌`* 🧋 ᦡᦡ',
     game: '𓂂𓏸  𐅹੭੭   *`Game`* 🥞 ᦡᦡ',
     serbot: '𓂂𓏸  𐅹੭੭   *`𝖩𝖺𝖽ı-ᗷᨣƚ𝗌`* 🍂 ᦡᦡ',
@@ -51,7 +66,7 @@ let handler = async (m, { conn, usedPrefix}) => {
 ❐ _𝖯𝗋𝖾𝗆𝗂𝗎𝗆:_ ${premium}
 ❐ _𝖱𝖾𝗀𝗂𝗌𝗍𝗋𝖺𝖽𝗈𝗌 𝗍𝗈𝗍𝖺𝗅𝖾𝗌:_ ${totalreg}
 
-╰┈□ 𝖨𝖭𝖥𝖮-𝖡𝖮𝖳
+╰┈□ 𝖨𝖭𝖥𝖮-𝖡𝖤𝖳
 ❐ _𝖳𝗂𝖾𝗆𝗉𝗈 𝖺𝖼𝗍𝗂𝗏𝗈:_ ${uptime}
 ❐ _𝖦𝗋𝗎𝗉𝗈𝗌 𝖺𝖼𝗍𝗂𝗏𝗈𝗌:_ ${groupsCount}
 ❐ _𝖥𝖾𝖼𝗁𝖺 𝖺𝖼𝗍𝗎𝖺𝗅:_ [${new Date().toLocaleString('es-ES')}]
@@ -77,31 +92,46 @@ let handler = async (m, { conn, usedPrefix}) => {
   let menuText = infoUser + '\n\n' + menu.join('\n\n') + '\n' + after;
 
   await m.react('🌱');
-
-  const imageUrl = 'https://files.catbox.moe/0dvlsr.jpg';
   
+  const imageUrl = 'https://files.catbox.moe/0dvlsr.jpg';
+  let imageBuffer = await getBuffer(imageUrl); 
 
-  const externalAdReply = {
-      title: 'Shadow bot',
-      body: '⊱┊ MαყBσƚ ᵇʸ ˢᵒʸᵐᵃყᶜᵒˡ ❦',
-      thumbnailUrl: imageUrl,
-      sourceUrl: 'https://mayapi.ooguy.com',
-      mediaType: 2,
-      renderLargerThumbnail: true
-  };
-
-  await conn.sendMessage(m.chat, {
-      text: menuText,
-      contextInfo: {
-          externalAdReply: externalAdReply,
-          mentionedJid: [m.sender, userId],
-          isForwarded: true,
-      },
-      buttons: [
-          { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
-          { buttonId: `${usedPrefix}ping`, buttonText: { displayText: '⚡ ᴠᴇʟᴏᴄɪᴅᴀᴅ ᴅᴇʟ ʙᴏᴛ'}, type: 1}
-      ]
-  }, { quoted: m});
+  if (imageBuffer) {
+      await conn.sendMessage(m.chat, {
+          image: imageBuffer, 
+          caption: menuText,
+          contextInfo: {
+              mentionedJid: [m.sender, userId],
+              isForwarded: true,
+          },
+          buttons: [
+              { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
+              { buttonId: `${usedPrefix}ping`, buttonText: { displayText: '⚡ ᴠᴇʟᴏᴄɪᴅᴀᴅ ᴅᴇʟ ʙᴏᴛ'}, type: 1}
+          ]
+      }, { quoted: m});
+  } else {
+      const externalAdReply = {
+          title: 'Shadow bot',
+          body: '⊱┊ MαყBσƚ ᵇʸ ˢᵒʸᵐᵃყᶜᵒˡ ❦',
+          thumbnailUrl: imageUrl,
+          sourceUrl: 'https://mayapi.ooguy.com',
+          mediaType: 2, 
+          renderLargerThumbnail: true
+      };
+      
+      await conn.sendMessage(m.chat, {
+          text: menuText,
+          contextInfo: {
+              externalAdReply: externalAdReply,
+              mentionedJid: [m.sender, userId],
+              isForwarded: true,
+          },
+          buttons: [
+              { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🪐 sᴇʀ sᴜʙ-ʙᴏᴛ'}, type: 1},
+              { buttonId: `${usedPrefix}ping`, buttonText: { displayText: '⚡ ᴠᴇʟᴏᴄɪᴅᴀᴅ ᴅᴇʟ ʙᴏᴛ'}, type: 1}
+          ]
+      }, { quoted: m});
+  }
 };
 
 handler.help = ['menu'];
