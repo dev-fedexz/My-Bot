@@ -21,15 +21,16 @@ const handler = async (m, { conn, text, isROwner}) => {
     await m.react('✔️');
 
     await conn.sendMessage(m.chat, {
-        text: errorMessage2,
-        contextInfo: {
-          externalAdReply: {
-            title: 'Shadow - updates',
-            thumbnail: await (await fetch(icono)).buffer(),
-            body: 'Error inesperado',
-            sourceUrl: 'https://github.com/dev-fedexyzz',
-            mediaType: 2,
-            renderLargerThumbnail: true
+      text: messager,
+      contextInfo: {
+        externalAdReply: {
+          title: 'Shadow - updates',
+          thumbnail: await (await fetch(icono)).buffer(),
+          body: 'Actualización completada',
+          thumbnailUrl: imageUrl,
+          sourceUrl: 'https://github.com/dev-fedexyzz',
+          mediaType: 2,
+          renderLargerThumbnail: true
 },
         mentionedJid: [m.sender],
         isForwarded: true
@@ -46,7 +47,7 @@ const handler = async (m, { conn, text, isROwner}) => {
             line.includes('.cache/') ||
             line.includes('tmp/') ||
             line.includes('database.json') ||
-            line.includes('Shadow/Principal/') ||
+            line.includes('sessions/Principal/') ||
             line.includes('npm-debug.log')
 ) return null;
           return '*→ ' + line.slice(3) + '*';
