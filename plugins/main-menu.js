@@ -73,7 +73,7 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
         contextInfo: {
             externalAdReply: {
                 title: global.canalNombreM[0],
-                body: '𝑺𝒉𝒂𝒅𝒐𝒘`𝑺 - 𝑩𝒐𝒕',
+                body: '_𝖲𝗁𝖺𝖽𝗈𝗐 -  𝖡𝗈𝗍_',
                 thumbnailUrl: 'https://files.catbox.moe/4fel4e.png',
                 sourceUrl: 'hhttps://github.com/Shadows-club',
                 mediaType: 1,
@@ -83,7 +83,7 @@ ${cmds.map(cmd => `➩ ${cmd}`).join('\n')}
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
                 newsletterJid: global.canalIdM[0],
-                newsletterName: 'Shadow - Bot',
+                newsletterName: '𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍',
                 serverMessageId: -1,
             }
         }
