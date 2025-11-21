@@ -4,7 +4,7 @@ import { fileURLToPath } from "url"
 import fs from "fs"
 
 // ===
-global.botNumber = "" //Ejemplo: 573218138672
+global.botNumber = "" //Ejemplo: 5491162424280
 
 // ===
 
