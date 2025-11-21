@@ -109,4 +109,36 @@ let handler = async (m, { conn, args}) => {
       return conn.reply(m.chat, '*Envía una imagen o video para convertirlo en sticker (máx 15s en vídeo)*', m)
 }
 } catch (e) {
-    console.error(e)
+    console.error(e)return conn.reply(m.chat, '❌ Ocurrió un error creando el sticker.', m)
+}
+}
+
+handler.help = ['stiker <img>', 'sticker <url>']
+handler.tags = ['sticker']
+handler.command = ['s', 'sticker', 'stiker']
+
+export default handler
+
+async function tryAutoReduce(buffer) {
+  const img = await Jimp.read(buffer)
+  const width = img.bitmap.width
+  const height = img.bitmap.height
+  const MAX_DIM = 1000
+  const TALL_RATIO = 1.8
+  const MUST_REDUCE = (height> MAX_DIM || width> MAX_DIM || height> width * TALL_RATIO || width> height * TALL_RATIO)
+
+  if (!MUST_REDUCE) return { buffer, reduced: false}
+
+  const scale = Math.min(MAX_DIM / width, MAX_DIM / height, 1)
+  const newW = Math.max(1, Math.round(width * scale))
+  const newH = Math.max(1, Math.round(height * scale))
+  img.resize(newW, newH)
+  const outBuffer = await img.quality(80).getBufferAsync(Jimp.MIME_JPEG)
+
+  console.log(`🔄 autoReduce: ${width}x${height} -> ${newW}x${newH}`)
+  return { buffer: outBuffer, reduced: true}
+}
+
+function isUrl(text) {
+  return text.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%. _+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_ +.~#?&/=]*)(jpe?g|gif|png|webp)/, 'gi'))
+}
