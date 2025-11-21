@@ -6,12 +6,12 @@ import fetch from 'node-fetch'
 
 async function makeFkontak() {
   try {
-    const res = await fetch('https://files.catbox.moe/ahpkd5.jpg') 
+    const res = await fetch('https://i.postimg.cc/8zG3Ny13/image.jpg') 
     
     const thumb2 = Buffer.from(await res.arrayBuffer())
     return {
       key: { participants: '0@s.whatsapp.net', remoteJid: 'status@broadcast', fromMe: false, id: 'Halo' },
-      message: { locationMessage: { name: 'Tiktok Descarga', jpegThumbnail: thumb2 } },
+      message: { locationMessage: { name: 'Shadow - Descarga', jpegThumbnail: thumb2 } },
       participant: '0@s.whatsapp.net'
     }
   } catch {
@@ -26,7 +26,7 @@ async function obtenerTokenYCookie() {
   const cookie = res.headers['set-cookie']?.map(c => c.split(';')[0]).join('; ') || ''
   const tokenMatch = res.data.match(/<input[^>]+name="token"[^>]+value="([^"]+)"/i)
   const token = tokenMatch?.[1]
-  if (!token) throw new Error('🪴 No se encontró el token')
+  if (!token) throw new Error('\`\`\`🪐 No se encontró el token\`\`\`')
   return { token, cookie }
 }
 
@@ -47,7 +47,7 @@ async function descargarTikTok(urlTikTok) {
   })
 
   const html = res.data?.data
-  if (!html) throw new Error('🪴 No se encontraron datos en la respuesta')
+  if (!html) throw new Error('\`\`\`🌱 No se encontraron datos en la respuesta\`\`\`')
 
   const titleMatch = html.match(/<h1[^>]*>(.*?)<\/h1>/i)
   const titulo = titleMatch?.[1]?.replace(/<[^>]+>/g, '').trim() || 'Sin título'
@@ -68,16 +68,16 @@ async function descargarTikTok(urlTikTok) {
 
   if (enlacesImagenes.length > 0) return { tipo: 'imagen', titulo, imagenes: enlacesImagenes, enlaceMp3 }
 
-  throw new Error('🪴 No hubo respuesta, puede que el enlace sea incorrecto')
+  throw new Error('\`\`\`🌿 No hubo respuesta, puede que el enlace sea incorrecto\`\`\`')
 }
 
 let handler = async (m, { conn, args }) => {
   try {
     let fkontak = await makeFkontak()
 
-    if (!args[0]) return conn.reply(m.chat, '\`\`\`🌵 Por favor, ingresa un enlace de TikTok\`\`\`\'', fkontak, rcanal)
+    if (!args[0]) return conn.reply(m.chat, '\`\`\`🌵 Por favor, ingresa un enlace de TikTok\`\`\`\`', fkontak, rcanal)
     const url = args[0]
-    if (!url.includes('tiktok.com')) return conn.reply(m.chat, '⚠️ El enlace debe ser de TikTok', fkontak, rcanal)
+    if (!url.includes('tiktok.com')) return conn.reply(m.chat, '\`\`\`⚠️ El enlace debe ser de TikTok\`\`\`', fkontak, rcanal)
 
     await conn.reply(m.chat, '⏳ Descargando, espera un momento...', fkontak, rcanal)
 
