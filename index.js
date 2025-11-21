@@ -253,7 +253,7 @@ console.error("Rechazo no manejado detectado:", reason)
 })
 
 global.rutaJadiBot = join(__dirname, `./${jadi}`)
-if (global.mayJadibts) {
+if (global.ShadowJadibts) {
 if (!existsSync(global.rutaJadiBot)) {
 mkdirSync(global.rutaJadiBot, { recursive: true })
 console.log(chalk.bold.cyan(`ꕥ La carpeta: ${jadi} se creó correctamente.`))
@@ -268,7 +268,7 @@ const botPath = join(rutaJadiBot, gjbts)
 if (existsSync(botPath) && statSync(botPath).isDirectory()) {
 const readBotPath = readdirSync(botPath)
 if (readBotPath.includes(creds)) {
-mayJadiBot({ pathMayJadiBot: botPath, m: null, conn, args: '', usedPrefix: '/', command: 'serbot' })
+ShadowJadiBot({ pathShadowJadiBot: botPath, m: null, conn, args: '', usedPrefix: '/', command: 'serbot' })
 }}}}}
 
 const pluginFolder = global.__dirname(join(__dirname, './plugins/index'))
