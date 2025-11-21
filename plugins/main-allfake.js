@@ -9,7 +9,7 @@ var handler = m => m
 handler.all = async function (m) {
 
 global.canalIdM = ["120363406779087566@newsletter"]
-global.canalNombreM = ["Տհαժօա - Ⴆօէ"]
+global.canalNombreM = ["𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍"]
 global.channelRD = await getRandomChannel()
 
 global.d = new Date(new Date + 3600000)
@@ -29,7 +29,7 @@ var correo = 'soymaycol.cn@gmail.com'
 global.redes = [canal, comunidad, git, github, correo].getRandom()
 
 let nombre = m.pushName || 'Anónimo'
-let botname = global.botName || '𝖲𝗁𝖺𝖽𝗈𝗐 - 𝖡𝗈𝗍'
+let botname = global.botName || 'Տհαժօա - Ⴆօէ'
 
 global.packsticker = `
 🌱ᬊ Usuario: ${nombre}
