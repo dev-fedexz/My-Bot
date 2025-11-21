@@ -21,7 +21,7 @@ END:VCARD`;
         },
         message: {
             contactMessage: {
-                displayName: "🄲 𝘋𝘦𝘷-𝘧𝘦𝘥𝘦𝘹𝘺𝘻",
+                displayName: "𝘍𝘦𝘥𝘦 𝘜𝘤𝘩𝘪𝘩𝘢",
                 vcard,
             },
         },
@@ -31,7 +31,7 @@ END:VCARD`;
         m.chat,
         {
             contacts: {
-                displayName: "🄲 𝘋𝘦𝘷-𝘧𝘦𝘥𝘦𝘹𝘺𝘻",
+                displayName: "𝘍𝘦𝘥𝘦 𝘜𝘤𝘩𝘪𝘩𝘢",
                 contacts: [{ vcard }],
             },
             contextInfo: {
