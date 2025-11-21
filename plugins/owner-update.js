@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 
 const handler = async (m, { conn, text, isROwner}) => {
   if (!isROwner) return;
-  await m.react('🕒');
+  await m.react('⏳'); 
 
   const imageUrl = 'https://files.catbox.moe/ahpkd5.jpg';
 
@@ -23,15 +23,15 @@ const handler = async (m, { conn, text, isROwner}) => {
     const stdout = execSync('git pull' + (m.fromMe && text? ' ' + text: ''));
     let messager = stdout.toString();
 
-    if (messager.includes('🌱 Ya está cargada la actualización.')) {
-      messager = '🕸 Los datos ya están actualizados a la última versión.';
+    if (messager.includes('❀ Ya está cargada la actualización.')) {
+      messager = '☘ Los datos ya están actualizados a la última versión.';
 }
 
     if (messager.includes('ꕥ Actualizando.')) {
-      messager = '⏳ Procesando, espere un momento mientras me actualizo.\n\n' + stdout.toString();
+      messager = '🕶️ Procesando, espere un momento mientras me actualizo.\n\n' + stdout.toString();
 }
 
-    await m.react('✔️');
+    await m.react('✅');
 
     await conn.sendMessage(m.chat, {
       text: messager,
@@ -66,7 +66,7 @@ const handler = async (m, { conn, text, isROwner}) => {
 }).filter(Boolean);
 
         if (conflictedFiles.length> 0) {
-          const errorMessage = `\`⚠︎ No se pudo realizar la actualización:\`\n\n> *Se han encontrado cambios locales en los archivos del bot que entran en conflicto con las nuevas actualizaciones del repositorio.*\n\n${conflictedFiles.join('\n')}.`;
+          const errorMessage = `\`❌ No se pudo realizar la actualización:\`\n\n> *Se han encontrado cambios locales en los archivos del bot que entran en conflicto con las nuevas actualizaciones del repositorio.*\n\n${conflictedFiles.join('\n')}.`;
           await conn.sendMessage(m.chat, {
             text: errorMessage,
             contextInfo: {
@@ -82,14 +82,14 @@ const handler = async (m, { conn, text, isROwner}) => {
               isForwarded: true
 }
 }, { quoted: m});
-          await m.react('✖️');
+          await m.react('❌');
 }
 }
 } catch (error) {
       console.error(error);
-      let errorMessage2 = '⚠︎ Ocurrió un error inesperado.';
+      let errorMessage2 = '❌ Ocurrió un error inesperado.';
       if (error.message) {
-        errorMessage2 += '\n⚠︎ Mensaje de error: ' + error.message;
+        errorMessage2 += '\n🌱 Mensaje de error: ' + error.message;
 }
       await conn.sendMessage(m.chat, {
         text: errorMessage2,
@@ -106,7 +106,7 @@ const handler = async (m, { conn, text, isROwner}) => {
           isForwarded: true
 }
 }, { quoted: m});
-}
+  }
 }
 };
 
