@@ -1,77 +1,41 @@
-import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
 import Jimp from 'jimp'
-import { sticker} from '../lib/sticker.js'
+import { sticker } from '../lib/sticker.js'
 import uploadFile from '../lib/uploadFile.js'
 import uploadImage from '../lib/uploadImage.js'
-import { webp2png} from '../lib/webp2mp4.js'
+import { webp2png } from '../lib/webp2mp4.js'
+import { sendCustomPedido } from '../lib/sendCustomPedido.js' 
 
-async function sendCustomPedido(m, conn, texto) {
+let handler = async (m, { conn, args, usedPrefix, command }) => {
+  let stiker = false
+  let q = m.quoted ? m.quoted : m
+  let mime = (q.msg || q).mimetype || q.mediaType || ''
+
   try {
-    const img = 'https://raw.githubusercontent.com/El-brayan502/dat4/main/uploads/3e1dfb-1763309355015.jpg'
-    const res = await axios.get(img, { responseType: 'arraybuffer'})
-    const imgBuffer = Buffer.from(res.data)
-
-    const orderMessage = {
-      orderId: 'FAKE-' + Date.now(),
-      thumbnail: imgBuffer,
-      itemCount: 1,
-      status: 1,
-      surface: 1,
-      message: texto,
-      orderTitle: 'Shadow - Tourl',
-      token: null,
-      sellerJid: null,
-      totalAmount1000: '0',
-      totalCurrencyCode: 'GTQ',
-      contextInfo: {
-        externalAdReply: {
-          title: botname,
-          body: '',
-          thumbnailUrl: img,
-          mediaType: 1,
-          renderLargerThumbnail: true
-}
-}
-}
-
-    const msg = generateWAMessageFromContent(m.chat, { orderMessage}, { quoted: m})
-    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id})
-} catch (err) {
-    console.error(err)
-    m.reply('⚠️ Error enviando el pedido.', m)
-}
-}
-
-let handler = async (m, { conn, args}) => {
-  try {
-    const text = args.join(' ')
-    if (!text) return sendCustomPedido(m, conn, '*ⓘ* `Atención: Para continuar, es necesario que envíes una imagen, vídeo, audio o gif.`')
-
-    let stiker = false
-    let q = m.quoted? m.quoted: m
-    let mime = (q.msg || q).mimetype || q.mediaType || ''
-
     if (/webp|image|video/g.test(mime)) {
-      if (/video/g.test(mime) && (q.msg || q).seconds> 15) {
+      
+      if (/video/g.test(mime) && (q.msg || q).seconds > 15) {
         return conn.reply(m.chat, '🚫 El video no puede durar más de *15 segundos* para sticker.', m)
-}
+      }
 
       let data = await q.download?.()
-      if (!data) return conn.reply(m.chat, '📌 Envía una imagen o video para crear un sticker.', m)
+      if (!data) return conn.reply(m.chat, '📌 Error al obtener los datos del archivo.', m)
 
-      if (/image/.test(mime) || (/webp/.test(mime) &&!/video/.test(mime))) {
+      let reducedNoteSent = false
+
+      if (/image/.test(mime) || (/webp/.test(mime) && !/video/.test(mime))) {
         try {
-          const { buffer: reducedBuffer, reduced} = await tryAutoReduce(data)
+          const { buffer: reducedBuffer, reduced } = await tryAutoReduce(data)
           if (reduced) {
             data = reducedBuffer
-            await conn.reply(m.chat, '🔄 Tu imagen era muy grande/alta — se redujo automáticamente antes de crear el sticker.', m)
-}
-} catch (err) {
+            reducedNoteSent = true
+            try { await conn.reply(m.chat, '🔄 Tu imagen era muy grande/alta — se redujo automáticamente antes de crear el sticker.', m) } catch (e) {}
+          }
+        } catch (err) {
           console.warn('No se pudo reducir la imagen:', err)
-}
-}
+        }
+      }
 
       let out
       try {
@@ -79,38 +43,36 @@ let handler = async (m, { conn, args}) => {
         let packstickers = global.db?.data?.users?.[userId] || {}
         let texto1 = packstickers.text1 || global.packsticker
         let texto2 = packstickers.text2 || global.packsticker2
+
         stiker = await sticker(data, false, texto1, texto2)
-} finally {
+      } finally {
         if (!stiker) {
           if (/webp/g.test(mime)) out = await webp2png(data)
           else if (/image/g.test(mime)) out = await uploadImage(data)
           else if (/video/g.test(mime)) out = await uploadFile(data)
-          if (typeof out!== 'string') out = await uploadImage(data)
+          if (typeof out !== 'string') out = await uploadImage(data)
           stiker = await sticker(false, out, global.packsticker, global.packsticker2)
-}
-}
-} else if (args[0]) {
-      if (isUrl(args[0])) {
+        }
+      }
+      
+    } else if (args[0] && isUrl(args[0])) {
         stiker = await sticker(false, args[0], global.packsticker, global.packsticker2)
-} else {
-        return conn.reply(m.chat, '⚠️ La URL no es válida.', m)
-}
-}
 
+    } else {
+        return sendCustomPedido(m, conn, `\`\`\`Por favor, responde a una imagen, video (máx 15s) o GIF para crear un sticker.\`\`\``, 'Crear Sticker')
+    }
+  } catch (e) {
+    console.error(e)
+    return conn.reply(m.chat, '❌ Ocurrió un error creando el sticker.', m)
+  } finally {
     if (stiker) {
       try {
         await conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
-} catch (e) {
-        try {
-          await conn.sendMessage(m.chat, { sticker: fs.readFileSync(stiker)}, { quoted: m})
-} catch (err) {}
-}
-} else {
-      return conn.reply(m.chat, '*Envía una imagen o video para convertirlo en sticker (máx 15s en vídeo)*', m)
-}
-} catch (e) {
-    console.error(e)return conn.reply(m.chat, '❌ Ocurrió un error creando el sticker.', m)
-}
+      } catch (e) {
+        try { await conn.sendMessage(m.chat, { sticker: fs.readFileSync(stiker) }, { quoted: m }) } catch (err) {}
+      }
+    }
+  }
 }
 
 handler.help = ['stiker <img>', 'sticker <url>']
@@ -119,26 +81,31 @@ handler.command = ['s', 'sticker', 'stiker']
 
 export default handler
 
-async function tryAutoReduce(buffer) {
-  const img = await Jimp.read(buffer)
+function tryAutoReduce(buffer) {
+  const img = Jimp.read(buffer)
   const width = img.bitmap.width
   const height = img.bitmap.height
+
   const MAX_DIM = 1000
   const TALL_RATIO = 1.8
-  const MUST_REDUCE = (height> MAX_DIM || width> MAX_DIM || height> width * TALL_RATIO || width> height * TALL_RATIO)
+  const MUST_REDUCE = (height > MAX_DIM || width > MAX_DIM || height > width * TALL_RATIO || width > height * TALL_RATIO)
 
-  if (!MUST_REDUCE) return { buffer, reduced: false}
+  if (!MUST_REDUCE) {
+    return { buffer, reduced: false }
+  }
 
   const scale = Math.min(MAX_DIM / width, MAX_DIM / height, 1)
   const newW = Math.max(1, Math.round(width * scale))
   const newH = Math.max(1, Math.round(height * scale))
-  img.resize(newW, newH)
-  const outBuffer = await img.quality(80).getBufferAsync(Jimp.MIME_JPEG)
 
-  console.log(`🔄 autoReduce: ${width}x${height} -> ${newW}x${newH}`)
-  return { buffer: outBuffer, reduced: true}
+  img.resize(newW, newH)
+  const outBuffer = img.quality(80).getBufferAsync(Jimp.MIME_JPEG)
+
+  console.log(`autoReduce: ${width}x${height} -> ${newW}x${newH}`)
+
+  return { buffer: outBuffer, reduced: true }
 }
 
 function isUrl(text) {
-  return text.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%. _+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_ +.~#?&/=]*)(jpe?g|gif|png|webp)/, 'gi'))
+  return text.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)(jpe?g|gif|png|webp)/, 'gi'))
 }
