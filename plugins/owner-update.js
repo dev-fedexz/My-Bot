@@ -1,53 +1,23 @@
 import { execSync} from 'child_process';
-import fetch from 'node-fetch';
 
 const handler = async (m, { conn, text, isROwner}) => {
   if (!isROwner) return;
-  await m.react('⏳'); 
-
-  const imageUrl = 'https://files.catbox.moe/ahpkd5.jpg';
-
-  let thumbnail;
-  try {
-    const res = await fetch(imageUrl);
-    if (!res.ok ||!res.headers.get('content-type')?.startsWith('image/')) {
-      throw new Error('No se pudo obtener una imagen válida del icono');
-}
-    thumbnail = await res.buffer();
-} catch (err) {
-    console.error('Error al obtener la imagen:', err);
-    thumbnail = null;
-}
+  await m.react('⏳');
 
   try {
     const stdout = execSync('git pull' + (m.fromMe && text? ' ' + text: ''));
     let messager = stdout.toString();
 
     if (messager.includes('❀ Ya está cargada la actualización.')) {
-      messager = '☘ Los datos ya están actualizados a la última versión.';
+      return conn.sendMessage(m.chat, '☘ Los datos ya están actualizados a la última versión.', m, global.rcanal);
 }
 
     if (messager.includes('ꕥ Actualizando.')) {
-      messager = '🕶️ Procesando, espere un momento mientras me actualizo.\n\n' + stdout.toString();
+      return conn.sendMessage(m.chat, '🌱 Procesando la actualización, espere un momento.\n\n' + stdout.toString(), m, global.rcanal);
 }
 
     await m.react('✅');
-
-    await conn.sendMessage(m.chat, {
-      text: messager,
-      contextInfo: {
-        externalAdReply: {
-          title: 'Shadow - updates',
-          body: 'Actualización completada',
-          thumbnail,
-          sourceUrl: 'https://github.com/dev-fedexyzz',
-          mediaType: 2,
-          renderLargerThumbnail: true
-},
-        mentionedJid: [m.sender],
-        isForwarded: true
-}
-}, { quoted: m});
+    return conn.sendMessage(m.chat, messager, m, global.rcanal);
 
 } catch {
     try {
@@ -66,23 +36,9 @@ const handler = async (m, { conn, text, isROwner}) => {
 }).filter(Boolean);
 
         if (conflictedFiles.length> 0) {
-          const errorMessage = `\`❌ No se pudo realizar la actualización:\`\n\n> *Se han encontrado cambios locales en los archivos del bot que entran en conflicto con las nuevas actualizaciones del repositorio.*\n\n${conflictedFiles.join('\n')}.`;
-          await conn.sendMessage(m.chat, {
-            text: errorMessage,
-            contextInfo: {
-              externalAdReply: {
-                title: 'Shadow - updates',
-                body: 'Conflictos detectados',
-                thumbnail,
-                sourceUrl: 'https://github.com/dev-fedexyzz',
-                mediaType: 2,
-                renderLargerThumbnail: true
-},
-              mentionedJid: [m.sender],
-              isForwarded: true
-}
-}, { quoted: m});
+          const errorMessage = `❌ No se pudo realizar la actualización:\n\n> Se han encontrado cambios locales en los archivos del bot que entran en conflicto con las nuevas actualizaciones del repositorio.\n\n${conflictedFiles.join('\n')}.`;
           await m.react('❌');
+          return conn.sendMessage(m.chat, errorMessage, m, global.rcanal);
 }
 }
 } catch (error) {
@@ -91,22 +47,8 @@ const handler = async (m, { conn, text, isROwner}) => {
       if (error.message) {
         errorMessage2 += '\n🌱 Mensaje de error: ' + error.message;
 }
-      await conn.sendMessage(m.chat, {
-        text: errorMessage2,
-        contextInfo: {
-          externalAdReply: {
-            title: 'Shadow - updates',
-            body: 'Error inesperado',
-            thumbnail,
-            sourceUrl: 'https://github.com/dev-fedexyzz',
-            mediaType: 2,
-            renderLargerThumbnail: true
-},
-          mentionedJid: [m.sender],
-          isForwarded: true
+      return conn.sendMessage(m.chat, errorMessage2, m, global.rcanal);
 }
-}, { quoted: m});
-  }
 }
 };
 
