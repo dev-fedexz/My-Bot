@@ -75,7 +75,7 @@ let handler = async (m, { conn, args }) => {
   try {
     let fkontak = await makeFkontak()
 
-    if (!args[0]) return conn.reply(m.chat, '\`\`\`🌵 Por favor, ingresa un enlace de TikTok\`\`\`\', fkontak, rcanal)
+    if (!args[0]) return conn.reply(m.chat, '\`\`\`🌵 Por favor, ingresa un enlace de TikTok\`\`\`\'', fkontak, rcanal)
     const url = args[0]
     if (!url.includes('tiktok.com')) return conn.reply(m.chat, '\`\`\`⚠️ El enlace debe ser de TikTok\`\`\`', fkontak, rcanal)
 
