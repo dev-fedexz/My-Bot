@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 
 async function makeFkontak() {
   try {
-    const res = await fetch('https://i.postimg.cc/8zG3Ny13/image.jpg') 
+    const res = await fetch('https://files.catbox.moe/ahpkd5.jpg') 
     
     const thumb2 = Buffer.from(await res.arrayBuffer())
     return {
