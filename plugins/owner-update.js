@@ -4,16 +4,18 @@ const handler = async (m, { conn, text, isROwner}) => {
   if (!isROwner) return;
   await m.react('⏳');
 
+  await conn.sendMessage(m.chat, '🌱 Procesando la actualización, espere un momento.', m, global.rcanal);
+
   try {
     const stdout = execSync('git pull' + (m.fromMe && text? ' ' + text: ''));
     let messager = stdout.toString();
 
     if (messager.includes('❀ Ya está cargada la actualización.')) {
-      return conn.sendMessage(m.chat, '🌵 Los datos ya están actualizados a la última versión.', m, global.rcanal);
+      return conn.sendMessage(m.chat, '☘ Los datos ya están actualizados a la última versión.', m, global.rcanal);
 }
 
     if (messager.includes('ꕥ Actualizando.')) {
-      return conn.sendMessage(m.chat, '🌱 Procesando la actualización, espere un momento.\n\n' + stdout.toString(), m, global.rcanal);
+      return conn.sendMessage(m.chat, '🌱 Actualización en curso...\n\n' + stdout.toString(), m, global.rcanal);
 }
 
     await m.react('✅');
