@@ -6,18 +6,29 @@ const handler = async (m, { conn, text, isROwner}) => {
   await m.react('🕒');
 
   const imageUrl = 'https://files.catbox.moe/ahpkd5.jpg';
-  const icono = imageUrl;
+
+  let thumbnail;
+  try {
+    const res = await fetch(imageUrl);
+    if (!res.ok ||!res.headers.get('content-type')?.startsWith('image/')) {
+      throw new Error('No se pudo obtener una imagen válida del icono');
+}
+    thumbnail = await res.buffer();
+} catch (err) {
+    console.error('Error al obtener la imagen:', err);
+    thumbnail = null;
+}
 
   try {
     const stdout = execSync('git pull' + (m.fromMe && text? ' ' + text: ''));
     let messager = stdout.toString();
 
-    if (messager.includes('❀ Ya está cargada la actualización.')) {
-      messager = '❀ Los datos ya están actualizados a la última versión.';
+    if (messager.includes('🌱 Ya está cargada la actualización.')) {
+      messager = '🕸 Los datos ya están actualizados a la última versión.';
 }
 
     if (messager.includes('ꕥ Actualizando.')) {
-      messager = '❀ Procesando, espere un momento mientras me actualizo.\n\n' + stdout.toString();
+      messager = '⏳ Procesando, espere un momento mientras me actualizo.\n\n' + stdout.toString();
 }
 
     await m.react('✔️');
@@ -28,7 +39,7 @@ const handler = async (m, { conn, text, isROwner}) => {
         externalAdReply: {
           title: 'Shadow - updates',
           body: 'Actualización completada',
-          thumbnail: await (await fetch(icono)).buffer(),
+          thumbnail,
           sourceUrl: 'https://github.com/dev-fedexyzz',
           mediaType: 2,
           renderLargerThumbnail: true
@@ -62,7 +73,7 @@ const handler = async (m, { conn, text, isROwner}) => {
               externalAdReply: {
                 title: 'Shadow - updates',
                 body: 'Conflictos detectados',
-                thumbnail: await (await fetch(icono)).buffer(),
+                thumbnail,
                 sourceUrl: 'https://github.com/dev-fedexyzz',
                 mediaType: 2,
                 renderLargerThumbnail: true
@@ -86,7 +97,7 @@ const handler = async (m, { conn, text, isROwner}) => {
           externalAdReply: {
             title: 'Shadow - updates',
             body: 'Error inesperado',
-            thumbnail: await (await fetch(icono)).buffer(),
+            thumbnail,
             sourceUrl: 'https://github.com/dev-fedexyzz',
             mediaType: 2,
             renderLargerThumbnail: true
