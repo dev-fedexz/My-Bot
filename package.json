@@ -1,5 +1,5 @@
 {
-"name": "MayBot",
+"name": "Shadow - Bot",
 "version": "1.0.0",
 "description": "WhatsApp Bot Multi Device",
 "main": "index.js",
@@ -13,14 +13,14 @@
 },
 "repository": {
 "type": "git",
-"url": "git+https://github.com/The-King-Destroy/YukiBot-MD.git"
+"url": "git+https://github.com/dev-fedexyro/Shadow-xyz.git"
 },  
-"author": "SoySapo6",
+"author": "𝐅𝐞𝐝𝐞 𝐔𝐜𝐡𝐢𝐡𝐚",
 "license": "MIT-License",
 "bugs": {
-"url": "https://github.com/SoySapo6/MayBot.git"
+"url": "https://github.com/dev-fedexyro/Shadow-xyz.git"
 },
-"homepage": "https://github.com/SoySapo6/MayBot#readme",
+"homepage": "https://github.com/dev-fedexyro/Shadow-xyz#readme",
 "dependencies": {
 "@hapi/boom": "^10.0.1",
 "@vitalets/google-translate-api": "^8.0.0",
