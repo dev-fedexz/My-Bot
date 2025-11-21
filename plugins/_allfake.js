@@ -9,7 +9,7 @@ var handler = m => m
 handler.all = async function (m) {
 
 global.canalIdM = ["120363406779087566@newsletter"]
-global.canalNombreM = ["Shadow - MD"]
+global.canalNombreM = ["Տհαժօա - Ⴆօէ"]
 global.channelRD = await getRandomChannel()
 
 global.d = new Date(new Date + 3600000)
