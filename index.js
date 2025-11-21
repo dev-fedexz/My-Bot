@@ -31,13 +31,13 @@ const { chain } = lodash
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
 
 let { say } = cfonts
-console.log(chalk.magentaBright('\n❀ Iniciando...'))
-say('MayBot', {
+console.log(chalk.magentaBright('\n🌱 Iniciando...'))
+say('Shadow - Bot, {
 font: 'BLOCK',
 align: 'center',
 gradient: ['grey', 'white']
 })
-say('Hecho por SoyMaycol', {
+say('Made by fede Uchiha', {
 font: 'console',
 align: 'center',
 colors: ['cyan', 'magenta', 'yellow']
@@ -61,7 +61,7 @@ return createRequire(dir)
 global.timestamp = { start: new Date() }
 const __dirname = global.__dirname(import.meta.url)
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
-global.prefix = new RegExp('^[#!./-]')
+global.prefix = new RegExp('^[/]')
 
 global.db = new Low(/https?:\/\//.test(global.opts['db'] || '') ? new cloudDBAdapter(global.opts['db']) : new JSONFile('database.json'))
 global.DATABASE = global.db
