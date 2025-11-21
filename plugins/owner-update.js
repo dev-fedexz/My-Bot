@@ -9,7 +9,7 @@ const handler = async (m, { conn, text, isROwner}) => {
     let messager = stdout.toString();
 
     if (messager.includes('❀ Ya está cargada la actualización.')) {
-      return conn.sendMessage(m.chat, '☘ Los datos ya están actualizados a la última versión.', m, global.rcanal);
+      return conn.sendMessage(m.chat, '🌵 Los datos ya están actualizados a la última versión.', m, global.rcanal);
 }
 
     if (messager.includes('ꕥ Actualizando.')) {
