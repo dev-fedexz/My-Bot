@@ -32,12 +32,10 @@ let nombre = m.pushName || 'Anónimo'
 let botname = global.botName || 'Shadow- Bot'
 
 global.packsticker = `
-°•☆╮⎯⃘✦⎯⃘☆•°
-᯽ᬊ Usuario: ${nombre}
+🌱ᬊ Usuario: ${nombre}
 ✺ Fecha: ${fecha}
 ✹ Hora: ${hora}
 ⊱Made by fede Uchiha ✧
-⏚⭒°•☆╯⎯⃘✦⎯⃘☆•°
 `
 
 global.fkontak = {
